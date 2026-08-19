@@ -148,6 +148,28 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Console logging so errors are visible in `docker logs`/journald instead of
+# vanishing silently once DEBUG=False (Django's default only emails ADMINS,
+# which isn't configured here).
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {"format": "[{asctime}] {levelname} {name}: {message}", "style": "{"},
+    },
+    "handlers": {
+        "console": {"class": "logging.StreamHandler", "formatter": "verbose"},
+    },
+    "root": {"handlers": ["console"], "level": "INFO"},
+    "loggers": {
+        "django": {"handlers": ["console"], "level": "INFO", "propagate": False},
+        "django.request": {"handlers": ["console"], "level": "ERROR", "propagate": False},
+        # axes logs routine successful-login bookkeeping at INFO, which drowns
+        # out everything else — WARNING+ still surfaces actual lockouts.
+        "axes": {"handlers": ["console"], "level": "WARNING", "propagate": False},
+    },
+}
+
 # Email — generic SMTP, works with Gmail/Workspace, SendGrid, Mailgun, or any
 # other provider by pointing these at the right host/port/credentials in .env.
 # Falls back to printing emails to the console when unset, so local dev never

@@ -31,10 +31,3 @@ class User(AbstractUser):
     @property
     def is_super_admin(self):
         return self.role == Role.SUPER_ADMIN
-
-    class Role(models.TextChoices):
-           SUPER_ADMIN = "super_admin", "Super Admin"
-           HR = "hr", "HR Management"
-           FINANCE = "finance", "Finance"
-           MEDIA = "media", "Media Team"
-           PROGRAM_MANAGER = "program_manager", "Program Manager"

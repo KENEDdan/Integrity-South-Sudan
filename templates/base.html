@@ -107,8 +107,11 @@
       </div>
       <div class="footer-col">
         <h4>Stay Connected</h4>
-        <form class="newsletter-form">
-          <input type="email" placeholder="Your email address" class="form-input" required>
+        <form class="newsletter-form" method="post" action="{% url 'contact:newsletter_signup' %}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.path }}">
+          <input type="text" name="website" autocomplete="off" tabindex="-1" class="hp-field" aria-hidden="true">
+          <input type="email" name="email" placeholder="Your email address" class="form-input" required>
           <button type="submit" class="btn btn-primary">Subscribe</button>
         </form>
         <div style="margin-top:1rem;">
