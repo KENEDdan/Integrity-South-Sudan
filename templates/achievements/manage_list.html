@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Manage Achievements{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+  <h1>Manage Achievements</h1>
+  <a href="{% url 'achievements:achievement_create' %}" class="btn btn-primary">+ Add Achievement</a>
+</div>
+<div class="card" style="overflow-x:auto;">
+  <table class="data-table">
+    <thead><tr><th>Title</th><th>Published</th><th>Added</th><th></th></tr></thead>
+    <tbody>
+      {% for item in achievements %}
+      <tr>
+        <td>{{ item.title }}</td>
+        <td>{% if item.is_published %}<span class="status-pill status-active">Yes</span>{% else %}<span class="status-pill status-terminated">No</span>{% endif %}</td>
+        <td>{{ item.created_at|date:"d M Y" }}</td>
+        <td>
+          <a href="{% url 'achievements:achievement_edit' item.pk %}" class="btn btn-secondary btn-sm">Edit</a>
+          <a href="{% url 'achievements:achievement_delete' item.pk %}" class="btn btn-danger btn-sm">Delete</a>
+        </td>
+      </tr>
+      {% empty %}<tr><td colspan="4">No achievements yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

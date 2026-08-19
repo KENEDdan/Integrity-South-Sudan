@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Assets{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+  <h1>Assets</h1>
+  <a href="{% url 'assets:asset_create' %}" class="btn btn-primary">+ Add Asset</a>
+</div>
+<div class="card" style="overflow-x:auto;">
+  <table class="data-table">
+    <thead><tr><th>Name</th><th>Type</th><th>Assigned To</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for asset in assets %}
+      <tr>
+        <td>{{ asset.name }}</td><td>{{ asset.get_asset_type_display }}</td>
+        <td>{{ asset.assigned_to.full_name|default:"Unassigned" }}</td>
+        <td><span class="status-pill status-active">{{ asset.get_status_display }}</span></td>
+        <td><a href="{% url 'assets:asset_detail' asset.pk %}" class="btn btn-secondary btn-sm">View</a></td>
+      </tr>
+      {% empty %}<tr><td colspan="5">No assets yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

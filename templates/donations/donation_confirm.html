@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Confirm Donation{% endblock %}
+{% block content %}
+<h1>Confirm Donation — {{ donation.reference_code }}</h1>
+<div class="card" style="margin-bottom:1.5rem;">
+  <p><strong>Donor:</strong> {{ donation.donor_name }} ({{ donation.donor_email }})</p>
+  <p><strong>Amount:</strong> {{ donation.currency }} {{ donation.amount }}</p>
+  <p>Confirming will record this as Income in the Finance ledger (In Bank).</p>
+</div>
+<form method="post" class="card">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-primary">Confirm Receipt</button>
+</form>
+{% endblock %}

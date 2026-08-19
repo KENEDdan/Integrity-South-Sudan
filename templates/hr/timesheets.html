@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Timesheets — {{ period_label }}{% endblock %}
+{% block content %}
+<h1>Timesheet Submissions — {{ period_label }}</h1>
+<div class="balance-tile" style="max-width:220px; margin-bottom:1.5rem;">
+  <div class="amount">{{ percent }}%</div><div class="label">Submitted</div>
+</div>
+<div class="card" style="overflow-x:auto;">
+  <table class="data-table">
+    <thead><tr><th>Staff</th><th>Submitted</th><th>Date</th><th></th></tr></thead>
+    <tbody>
+      {% for record in records %}
+      <tr>
+        <td>{{ record.staff.full_name }}</td>
+        <td>{% if record.submitted %}<span class="status-pill status-active">Yes</span>{% else %}<span class="status-pill status-terminated">No</span>{% endif %}</td>
+        <td>{{ record.submitted_on|default:"—" }}</td>
+        <td>
+          <form method="post" action="{% url 'hr:timesheet_toggle' record.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-secondary btn-sm">{% if record.submitted %}Unmark{% else %}Mark Submitted{% endif %}</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}<tr><td colspan="4">No active staff.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

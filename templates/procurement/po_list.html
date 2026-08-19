@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Purchase Orders{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+  <h1>Purchase Orders</h1>
+  <a href="{% url 'procurement:vendor_list' %}" class="btn btn-secondary">Vendors</a>
+</div>
+<div class="card" style="overflow-x:auto;">
+  <table class="data-table">
+    <thead><tr><th>PO Number</th><th>Vendor</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for po in orders %}
+      <tr>
+        <td>{{ po.po_number }}</td><td>{{ po.vendor.name }}</td><td>{{ po.currency }} {{ po.total_amount }}</td>
+        <td><span class="status-pill {% if po.status == 'delivered' %}status-active{% else %}status-on_leave{% endif %}">{{ po.get_status_display }}</span></td>
+        <td>{% if po.status == "issued" %}<a href="{% url 'procurement:delivery_record' po.pk %}" class="btn btn-secondary btn-sm">Record Delivery</a>{% endif %}</td>
+      </tr>
+      {% empty %}<tr><td colspan="5">No purchase orders yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

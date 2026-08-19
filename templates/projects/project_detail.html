@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}{{ project.name }}{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+  <div>
+    <h1>{{ project.name }}</h1>
+    <span class="status-pill status-active">{{ project.get_status_display }}</span>
+    <span class="status-pill">{{ project.get_thematic_area_display }}</span>
+  </div>
+  <a href="{% url 'projects:project_edit' project.pk %}" class="btn btn-secondary">Edit</a>
+</div>
+
+<div class="balance-grid">
+  <div class="balance-tile"><div class="amount">{{ project.budget_currency }} {{ project.budget_amount }}</div><div class="label">Budget</div></div>
+  <div class="balance-tile"><div class="amount">{{ project.budget_currency }} {{ project.spent_amount }}</div><div class="label">Spent</div></div>
+  <div class="balance-tile"><div class="amount">{{ project.percent_spent }}%</div><div class="label">Budget Used</div></div>
+  <div class="balance-tile"><div class="amount">{{ project.budget_currency }} {{ project.budget_remaining }}</div><div class="label">Remaining</div></div>
+</div>
+
+<div class="card" style="margin-bottom:1.5rem;">
+  <p>{{ project.description }}</p>
+  <p><strong>Location:</strong> {{ project.location }} &nbsp; <strong>Donor:</strong> {{ project.donor|default:"—" }}</p>
+  <p><strong>Manager:</strong> {{ project.program_manager.get_full_name|default:"Unassigned" }} &nbsp;
+     <strong>Timeline:</strong> {{ project.start_date }} — {{ project.end_date|default:"ongoing" }}</p>
+</div>
+
+<div class="dashboard-header"><h2 style="margin:0;">Beneficiaries — Target vs Actual</h2>
+  <a href="{% url 'projects:beneficiary_add' project.pk %}" class="btn btn-primary btn-sm">+ Add Record</a>
+</div>
+<div class="card" style="overflow-x:auto; margin-bottom:1.5rem;">
+  <table class="data-table">
+    <thead><tr><th>Period</th><th>Date</th><th>Target</th><th>Actual</th><th>Male</th><th>Female</th></tr></thead>
+<tbody>
+  {% for b in project.beneficiary_records.all %}
+  <tr><td>{{ b.period_label }}</td><td>{{ b.period_date|default:"—" }}</td><td>{{ b.target_count }}</td><td>{{ b.actual_count }}</td><td>{{ b.male_count }}</td><td>{{ b.female_count }}</td></tr>
+      {% empty %}<tr><td colspan="5">No records yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="dashboard-header"><h2 style="margin:0;">M&E Indicators</h2>
+  <a href="{% url 'projects:indicator_add' project.pk %}" class="btn btn-primary btn-sm">+ Add Indicator</a>
+</div>
+<div class="card" style="overflow-x:auto; margin-bottom:1.5rem;">
+  <table class="data-table">
+    <thead><tr><th>Indicator</th><th>Target</th><th>Actual</th><th>% Achieved</th><th>Data Status</th></tr></thead>
+    <tbody>
+      {% for i in project.indicators.all %}
+      <tr><td>{{ i.indicator_name }}</td><td>{{ i.target_value }} {{ i.unit }}</td><td>{{ i.actual_value }} {{ i.unit }}</td><td>{{ i.percent_achieved }}%</td><td>{{ i.get_data_collection_status_display }}</td></tr>
+      {% empty %}<tr><td colspan="5">No indicators yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="dashboard-header"><h2 style="margin:0;">Field Reports</h2>
+  <a href="{% url 'projects:field_report_add' project.pk %}" class="btn btn-primary btn-sm">+ Submit Report</a>
+</div>
+<div class="card" style="overflow-x:auto; margin-bottom:1.5rem;">
+  <table class="data-table">
+    <thead><tr><th>Title</th><th>Date</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for r in project.field_reports.all %}
+      <tr>
+        <td>{{ r.title }}</td><td>{{ r.report_date }}</td>
+        <td><span class="status-pill {% if r.status == 'reviewed' %}status-active{% else %}status-on_leave{% endif %}">{{ r.get_status_display }}</span></td>
+        <td>{% if r.status == "pending" %}
+          <form method="post" action="{% url 'projects:field_report_mark_reviewed' project.pk r.pk %}">
+            {% csrf_token %}<button type="submit" class="btn btn-secondary btn-sm">Mark Reviewed</button>
+          </form>
+        {% endif %}</td>
+      </tr>
+      {% empty %}<tr><td colspan="4">No field reports yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="dashboard-header"><h2 style="margin:0;">Issues Log</h2>
+  <a href="{% url 'projects:issue_add' project.pk %}" class="btn btn-primary btn-sm">+ Log Issue</a>
+</div>
+<div class="card" style="overflow-x:auto; margin-bottom:1.5rem;">
+  <table class="data-table">
+    <thead><tr><th>Title</th><th>Category</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for issue in project.issues.all %}
+      <tr>
+        <td>{{ issue.title }}</td><td>{{ issue.get_category_display }}</td>
+        <td><span class="status-pill {% if issue.status == 'resolved' %}status-active{% else %}status-terminated{% endif %}">{{ issue.get_status_display }}</span></td>
+        <td>{% if issue.status == "open" %}<a href="{% url 'projects:issue_resolve' project.pk issue.pk %}" class="btn btn-secondary btn-sm">Resolve</a>{% endif %}</td>
+      </tr>
+      {% empty %}<tr><td colspan="4">No issues logged.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="dashboard-header"><h2 style="margin:0;">Team Tasks</h2>
+  <a href="{% url 'projects:task_add' project.pk %}" class="btn btn-primary btn-sm">+ Add Task</a>
+</div>
+<div class="card" style="overflow-x:auto; margin-bottom:1.5rem;">
+  <table class="data-table">
+    <thead><tr><th>Task</th><th>Assigned To</th><th>Due</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for task in project.tasks.all %}
+      <tr>
+        <td>{{ task.title }}</td>
+        <td>{{ task.assigned_staff.full_name|default:"Unassigned" }}</td>
+        <td>{{ task.due_date|default:"—" }}{% if task.is_overdue %} <span class="status-pill status-terminated">Overdue</span>{% endif %}</td>
+        <td><span class="status-pill {% if task.status == 'completed' %}status-active{% else %}status-on_leave{% endif %}">{{ task.get_status_display }}</span></td>
+        <td>{% if task.status != "completed" %}
+          <form method="post" action="{% url 'projects:task_complete' project.pk task.pk %}">
+            {% csrf_token %}<button type="submit" class="btn btn-secondary btn-sm">Mark Complete</button>
+          </form>
+        {% endif %}</td>
+      </tr>
+      {% empty %}<tr><td colspan="5">No tasks yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="dashboard-header"><h2 style="margin:0;">Documents</h2>
+  <a href="{% url 'projects:document_add' project.pk %}" class="btn btn-primary btn-sm">+ Upload Document</a>
+</div>
+<div class="card" style="overflow-x:auto;">
+  <table class="data-table">
+    <thead><tr><th>Title</th><th>Type</th><th>Uploaded</th><th></th></tr></thead>
+    <tbody>
+      {% for doc in project.documents.all %}
+      <tr><td>{{ doc.title }}</td><td>{{ doc.get_document_type_display }}</td><td>{{ doc.uploaded_at|date:"d M Y" }}</td>
+      <td><a href="{{ doc.file.url }}" class="btn btn-secondary btn-sm" target="_blank">View</a></td></tr>
+      {% empty %}<tr><td colspan="4">No documents yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

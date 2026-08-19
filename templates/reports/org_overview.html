@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Organization Overview{% endblock %}
+{% block content %}
+<h1>Organization Overview</h1>
+
+<h3 class="form-section-title">Org Health</h3>
+<div class="balance-grid">
+  <div class="balance-tile"><div class="amount">{{ active_projects_count }}</div><div class="label">Active Projects</div></div>
+  <div class="balance-tile"><div class="amount">{{ total_projects_count }}</div><div class="label">Total Projects</div></div>
+  <div class="balance-tile"><div class="amount">{{ beneficiaries_ytd }}</div><div class="label">Beneficiaries Reached (YTD)</div></div>
+  <div class="balance-tile"><div class="amount">{{ active_staff_count }}</div><div class="label">Active Staff</div></div>
+</div>
+
+<h3 class="form-section-title">Budget Utilization (all projects)</h3>
+<div class="card" style="overflow-x:auto; margin-bottom:1.5rem;">
+  <table class="data-table">
+    <thead><tr><th>Currency</th><th>Total Budget</th><th>Total Spent</th><th>Remaining</th><th>% Used</th></tr></thead>
+    <tbody>
+      {% for row in budget_rows %}
+      <tr><td>{{ row.currency }}</td><td>{{ row.budget }}</td><td>{{ row.spent }}</td><td>{{ row.remaining }}</td><td>{{ row.percent }}%</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<h3 class="form-section-title">Financial Summary</h3>
+<div class="balance-grid">
+  <div class="balance-tile"><div class="amount">${{ balance.cash_usd }}</div><div class="label">Cash at Hand (USD)</div></div>
+  <div class="balance-tile"><div class="amount">SSP {{ balance.cash_ssp }}</div><div class="label">Cash at Hand (SSP)</div></div>
+  <div class="balance-tile"><div class="amount">${{ balance.bank_usd }}</div><div class="label">In Bank (USD)</div></div>
+  <div class="balance-tile"><div class="amount">SSP {{ balance.bank_ssp }}</div><div class="label">In Bank (SSP)</div></div>
+</div>
+<div class="card" style="overflow-x:auto; margin-bottom:1.5rem;">
+  <table class="data-table">
+    <thead><tr><th>Currency</th><th>Total Income</th><th>Total Expense</th><th>Net</th></tr></thead>
+    <tbody>
+      {% for row in finance_rows %}
+      <tr><td>{{ row.currency }}</td><td>{{ row.income }}</td><td>{{ row.expense }}</td><td>{{ row.net }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p style="font-size:0.8rem; opacity:0.7; margin-top:0.5rem;">
+    These are organization-wide totals, not reconciled per grant. Per-donor budget vs. spend is on the
+    <a href="{% url 'projects:donor_list' %}">Donors page</a>.
+  </p>
+</div>
+
+<h3 class="form-section-title">Risk & Compliance</h3>
+<div class="card" style="margin-bottom:1.5rem;">
+  <p><strong>{{ overdue_field_reports.count }}</strong> field report(s) pending review for over a week.</p>
+  <p><strong>{{ projects_ending_soon.count }}</strong> project(s) ending within 60 days.</p>
+  <p><strong>{{ overdue_tasks.count }}</strong> overdue task(s) across all projects.</p>
+  <a href="{% url 'audit:log_list' %}" class="btn btn-secondary btn-sm">View Full Audit Log</a>
+
+  {% if projects_ending_soon %}
+    <h4 style="margin-top:1.5rem;">Projects Ending Soon</h4>
+    <table class="data-table">
+      <thead><tr><th>Project</th><th>End Date</th><th>Manager</th></tr></thead>
+      <tbody>
+        {% for p in projects_ending_soon %}
+        <tr><td><a href="{% url 'projects:project_detail' p.pk %}">{{ p.name }}</a></td><td>{{ p.end_date }}</td><td>{{ p.program_manager.get_full_name|default:"Unassigned" }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+
+<h3 class="form-section-title">Team Performance — Projects by Manager</h3>
+<div class="card" style="overflow-x:auto; margin-bottom:1.5rem;">
+  <table class="data-table">
+    <thead><tr><th>Manager</th><th>Total</th><th>Active</th><th>Completed</th></tr></thead>
+    <tbody>
+      {% for row in manager_breakdown %}
+      <tr>
+        <td>{{ row.program_manager__first_name|default:row.program_manager__username }} {{ row.program_manager__last_name }}</td>
+        <td>{{ row.total }}</td><td>{{ row.active }}</td><td>{{ row.completed }}</td>
+      </tr>
+      {% empty %}<tr><td colspan="4">No projects assigned to a manager yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<h3 class="form-section-title">Board & Donor Updates</h3>
+<div class="card" style="margin-bottom:1.5rem; opacity:0.6;">
+  <p>Not tracked yet — this needs a Board Meetings / Donor Reporting calendar model, which we haven't built. Flagging for a future round.</p>
+</div>
+
+<h3 class="form-section-title">Quick Actions</h3>
+<div class="dashboard-grid">
+  <div class="dashboard-tile"><h3>Approve Budgets</h3><p>Review financial requests awaiting your decision.</p>
+    <a href="{% url 'finance:super_admin_queue' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+  </div>
+  <div class="dashboard-tile"><h3>Send Announcement</h3><p>Message any admin role directly.</p>
+    <a href="{% url 'notifications:send_announcement' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+  </div>
+  <div class="dashboard-tile" style="opacity:0.6;"><h3>Sign Document</h3><p>Needs an e-signature integration (e.g. DocuSign) — not built, would need that account.</p></div>
+</div>
+{% endblock %}

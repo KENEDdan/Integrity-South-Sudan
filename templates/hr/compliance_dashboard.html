@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}HR Compliance{% endblock %}
+{% block content %}
+<h1>Compliance Alerts</h1>
+
+<h3 class="form-section-title">Contracts Expiring (next 60 days)</h3>
+<div class="card" style="overflow-x:auto; margin-bottom:1.5rem;">
+  <table class="data-table">
+    <thead><tr><th>Staff</th><th>Position</th><th>Contract End</th><th></th></tr></thead>
+    <tbody>
+      {% for member in contracts_expiring %}
+      <tr><td>{{ member.full_name }}</td><td>{{ member.position }}</td><td>{{ member.contract_end_date }}</td>
+      <td><a href="{% url 'hr:staff_detail' member.pk %}" class="btn btn-secondary btn-sm">View</a></td></tr>
+      {% empty %}<tr><td colspan="4">None expiring soon.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<h3 class="form-section-title">Probation Ending (next 30 days)</h3>
+<div class="card" style="overflow-x:auto; margin-bottom:1.5rem;">
+  <table class="data-table">
+    <thead><tr><th>Staff</th><th>Probation End</th><th></th></tr></thead>
+    <tbody>
+      {% for member in probation_ending %}
+      <tr><td>{{ member.full_name }}</td><td>{{ member.probation_end_date }}</td>
+      <td><a href="{% url 'hr:staff_detail' member.pk %}" class="btn btn-secondary btn-sm">View</a></td></tr>
+      {% empty %}<tr><td colspan="3">None ending soon.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<h3 class="form-section-title">Trainings Due (next 30 days)</h3>
+<div class="card" style="overflow-x:auto; margin-bottom:1.5rem;">
+  <table class="data-table">
+    <thead><tr><th>Staff</th><th>Training</th><th>Due</th></tr></thead>
+    <tbody>
+      {% for t in trainings_due %}
+      <tr><td>{{ t.staff.full_name }}</td><td>{{ t.training_name }}</td><td>{{ t.due_date }}{% if t.is_overdue %} <span class="status-pill status-terminated">Overdue</span>{% endif %}</td></tr>
+      {% empty %}<tr><td colspan="3">None due soon.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<h3 class="form-section-title">Missing Required Documents</h3>
+<div class="card" style="overflow-x:auto;">
+  <table class="data-table">
+    <thead><tr><th>Staff</th><th>Missing</th><th></th></tr></thead>
+    <tbody>
+      {% for row in missing_docs %}
+      <tr><td>{{ row.staff.full_name }}</td><td>{{ row.missing|join:", " }}</td>
+      <td><a href="{% url 'hr:staff_detail' row.staff.pk %}" class="btn btn-secondary btn-sm">View</a></td></tr>
+      {% empty %}<tr><td colspan="3">All active staff have required documents.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Content Calendar{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+  <h1>Content Calendar</h1>
+  <a href="{% url 'newsfeed:post_create' %}" class="btn btn-primary">+ New Post</a>
+</div>
+<div class="card" style="overflow-x:auto;">
+  <table class="data-table">
+    <thead><tr><th>Title</th><th>Category</th><th>Scheduled For</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for post in posts %}
+      <tr>
+        <td>{{ post.title }}</td>
+        <td>{{ post.get_category_display }}</td>
+        <td>{{ post.scheduled_for|default:"—" }}</td>
+        <td>
+          {% if post.is_scheduled %}<span class="status-pill status-on_leave">Scheduled</span>
+          {% elif post.is_published %}<span class="status-pill status-active">Live</span>
+          {% else %}<span class="status-pill status-terminated">Draft</span>{% endif %}
+        </td>
+        <td><a href="{% url 'newsfeed:post_edit' post.pk %}" class="btn btn-secondary btn-sm">Edit</a></td>
+      </tr>
+      {% empty %}<tr><td colspan="5">Nothing scheduled or recently posted.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

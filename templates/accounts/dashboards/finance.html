@@ -1,0 +1,17 @@
+{% extends "accounts/dashboard_base.html" %}
+{% block tiles %}
+<div class="dashboard-tile">
+  <h3>Organization Funds</h3>
+  <p>Cash: ${{ balance.cash_usd }} / SSP {{ balance.cash_ssp }}<br>Bank: ${{ balance.bank_usd }} / SSP {{ balance.bank_ssp }}</p>
+  <a href="{% url 'finance:dashboard_balances' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">View Details</a>
+</div>
+<div class="dashboard-tile"><h3>Financial Request Queue</h3><p>Review, forward, and disburse requests.</p>
+  <a href="{% url 'finance:request_queue' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Record Income/Expense</h3><p>Log a new financial transaction.</p>
+  <a href="{% url 'finance:transaction_create' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Send Financial Request</h3><p>Request funds for your own department needs.</p>
+  <a href="{% url 'finance:request_create' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+<article class="card">
+  <span class="news-card-category">{{ post.get_category_display }}</span>
+  <h1>{{ post.title }}</h1>
+  <small>{{ post.created_at|date:"d M Y" }}</small>
+
+  {% if post.youtube_embed_url %}
+    <div class="video-embed">
+      <iframe src="{{ post.youtube_embed_url }}" frameborder="0" allowfullscreen></iframe>
+    </div>
+  {% elif post.thumbnail %}
+    <img src="{{ post.thumbnail.url }}" alt="{{ post.title }}" style="width:100%; border-radius:8px; margin:1rem 0;">
+  {% endif %}
+
+  <div class="post-body">{{ post.body|linebreaks }}</div>
+
+  {% if post.gallery.all %}
+    <h3 class="form-section-title">Gallery</h3>
+    <div class="gallery-grid">
+      {% for item in post.gallery.all %}
+        <div class="gallery-item">
+          {% if item.image %}
+            <img src="{{ item.image.url }}" alt="{{ item.caption }}">
+          {% elif item.youtube_embed_url %}
+            <div class="video-embed">
+              <iframe src="{{ item.youtube_embed_url }}" frameborder="0" allowfullscreen></iframe>
+            </div>
+          {% endif %}
+          {% if item.caption %}<p class="gallery-caption">{{ item.caption }}</p>{% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</article>
+{% endblock %}

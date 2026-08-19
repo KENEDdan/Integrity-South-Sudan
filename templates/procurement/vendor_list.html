@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Vendors{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+  <h1>Vendors</h1>
+  <a href="{% url 'procurement:vendor_add' %}" class="btn btn-primary">+ Add Vendor</a>
+</div>
+<div class="card" style="overflow-x:auto;">
+  <table class="data-table">
+    <thead><tr><th>Name</th><th>Category</th><th>Contact</th></tr></thead>
+    <tbody>
+      {% for v in vendors %}
+      <tr><td>{{ v.name }}</td><td>{{ v.get_category_display }}</td><td>{{ v.contact_person }} {{ v.phone }}</td></tr>
+      {% empty %}<tr><td colspan="3">No vendors yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

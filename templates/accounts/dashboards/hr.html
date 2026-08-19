@@ -1,0 +1,33 @@
+{% extends "accounts/dashboard_base.html" %}
+{% block tiles %}
+<div class="dashboard-tile"><h3>Staff Directory</h3><p>Add and manage staff records.</p>
+  <a href="{% url 'hr:staff_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Leave Requests</h3><p>Review pending leave requests.</p>
+  <a href="{% url 'hr:leave_queue' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Timesheets</h3><p>Track this month's submission status.</p>
+  <a href="{% url 'hr:timesheets' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Recruitment</h3><p>Open positions and applicant pipeline.</p>
+  <a href="{% url 'hr:job_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Compliance Alerts</h3><p>Expiring contracts, probation, training, missing documents.</p>
+  <a href="{% url 'hr:compliance_dashboard' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Payroll</h3><p>Monthly salary totals and processing status.</p>
+  <a href="{% url 'hr:payroll_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Policies</h3><p>Staff handbook and code of conduct.</p>
+  <a href="{% url 'hr:policy_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Request Procurement</h3><p>Submit a requisition for goods or services.</p>
+  <a href="{% url 'procurement:requisition_create' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Send Financial Request</h3><p>Request funds from Finance for an activity.</p>
+  <a href="{% url 'finance:request_create' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>My Requests</h3><p>Track your submitted financial requests.</p>
+  <a href="{% url 'finance:my_requests' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+{% endblock %}

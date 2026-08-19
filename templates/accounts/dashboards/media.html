@@ -1,0 +1,33 @@
+{% extends "accounts/dashboard_base.html" %}
+{% block tiles %}
+<div class="dashboard-tile"><h3>News & Updates</h3><p>Publish news, breaking news, and event updates.</p>
+  <a href="{% url 'newsfeed:manage_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Content Calendar</h3><p>See scheduled and recently published posts.</p>
+  <a href="{% url 'newsfeed:content_calendar' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Achievements</h3><p>Upload achievement media.</p>
+  <a href="{% url 'achievements:manage_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Podcasts</h3><p>Add podcast entries.</p>
+  <a href="{% url 'podcasts:manage_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Activities</h3><p>Add capacity building, radio programs, and more.</p>
+  <a href="{% url 'activities:manage_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Request Procurement</h3><p>Submit a requisition for goods or services.</p>
+  <a href="{% url 'procurement:requisition_create' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Resource Library</h3><p>Shared photos, videos, logos, and templates.</p>
+  <a href="{% url 'media_library:resource_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile" style="opacity:0.6;"><h3>Social Media Metrics</h3><p>Needs Meta/X API credentials connected first.</p></div>
+<div class="dashboard-tile" style="opacity:0.6;"><h3>Website Analytics</h3><p>Needs a Google Analytics property connected first.</p></div>
+<div class="dashboard-tile" style="opacity:0.6;"><h3>Brand Monitoring</h3><p>Needs a social listening tool connected first.</p></div>
+<div class="dashboard-tile"><h3>Send Financial Request</h3><p>Request funds for media/production needs.</p>
+  <a href="{% url 'finance:request_create' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>My Requests</h3><p>Track your submitted financial requests.</p>
+  <a href="{% url 'finance:my_requests' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+{% endblock %}

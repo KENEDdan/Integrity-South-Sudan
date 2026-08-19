@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Account {% if is_reset %}Password Reset{% else %}Created{% endif %}{% endblock %}
+{% block content %}
+<h1>{% if is_reset %}Password Reset{% else %}Account Created{% endif %}</h1>
+<div class="card">
+  <p><strong>Username:</strong> {{ account.username }}</p>
+  <p><strong>Role:</strong> {{ account.get_role_display }}</p>
+  <p><strong>Temporary Password:</strong></p>
+  <p style="font-size:1.4rem; font-weight:700; color:var(--color-green); background:var(--color-surface); padding:0.75rem 1rem; border-radius:8px; display:inline-block;">{{ temp_password }}</p>
+  <p style="margin-top:1rem; font-size:0.85rem; opacity:0.8;">
+    {% if email_sent %}
+      This has also been emailed to {{ account.email }}.
+    {% else %}
+      Share this password with {{ account.username }} through a secure channel.
+    {% endif %}
+    They'll be required to set a new password the first time they log in. This password will not be shown again.
+  </p>
+  <a href="{% url 'accounts:admin_account_list' %}" class="btn btn-primary" style="margin-top:1rem;">Back to Accounts</a>
+</div>
+{% endblock %}

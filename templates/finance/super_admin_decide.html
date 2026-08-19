@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Review Request #{{ fin_request.pk }}{% endblock %}
+{% block content %}
+<h1>Review Request #{{ fin_request.pk }}</h1>
+<div class="card" style="margin-bottom:1.5rem;">
+  <p><strong>Requested by:</strong> {{ fin_request.requested_by.get_full_name|default:fin_request.requested_by.username }}</p>
+  <p><strong>Amount:</strong> {{ fin_request.currency }} {{ fin_request.amount }}</p>
+  <p><strong>Category:</strong> {{ fin_request.get_category_display }}</p>
+  <p><strong>Reason:</strong> {{ fin_request.reason }}</p>
+  {% if fin_request.additional_info %}<p><strong>Additional info from requester:</strong> {{ fin_request.additional_info }}</p>{% endif %}
+  <p><strong>Finance notes:</strong> {{ fin_request.finance_notes|default:"—" }}</p>
+</div>
+<form method="post" class="card">
+  {% csrf_token %}
+  <div class="form-group">
+    {% for choice in form.decision %}
+      <label style="display:block; margin-bottom:0.5rem; font-weight:normal;">{{ choice.tag }} {{ choice.choice_label }}</label>
+    {% endfor %}
+  </div>
+  <div class="form-group">{{ form.notes.label_tag }} {{ form.notes }}</div>
+  <button type="submit" class="btn btn-primary">Submit Decision</button>
+</form>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Forward Request{% endblock %}
+{% block content %}
+<h1>Forward Request #{{ fin_request.pk }} to Super Admin</h1>
+<div class="card" style="margin-bottom:1.5rem;">
+  <p><strong>Requested by:</strong> {{ fin_request.requested_by.get_full_name|default:fin_request.requested_by.username }}</p>
+  <p><strong>Amount:</strong> {{ fin_request.currency }} {{ fin_request.amount }}</p>
+  <p><strong>Category:</strong> {{ fin_request.get_category_display }}</p>
+  <p><strong>Reason:</strong> {{ fin_request.reason }}</p>
+</div>
+<form method="post" class="card">
+  {% csrf_token %}
+  <div class="form-group">{{ form.finance_notes.label_tag }} {{ form.finance_notes }}</div>
+  <button type="submit" class="btn btn-primary">Forward to Super Admin</button>
+</form>
+{% endblock %}

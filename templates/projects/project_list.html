@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Projects{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+  <h1>Projects</h1>
+  <div>
+    <a href="{% url 'projects:donor_list' %}" class="btn btn-secondary">Donors</a>
+    <a href="{% url 'projects:project_create' %}" class="btn btn-primary">+ New Project</a>
+  </div>
+</div>
+<div class="card" style="overflow-x:auto;">
+  <table class="data-table">
+    <thead><tr><th>Name</th><th>Thematic Area</th><th>Status</th><th>Budget</th><th>Spent</th><th>% Spent</th><th>End Date</th><th></th></tr></thead>
+    <tbody>
+      {% for project in projects %}
+      <tr>
+        <td>{{ project.name }}{% if project.is_overdue %} <span class="status-pill status-terminated">Overdue</span>{% endif %}</td>
+        <td>{{ project.get_thematic_area_display }}</td>
+        <td><span class="status-pill status-active">{{ project.get_status_display }}</span></td>
+        <td>{{ project.budget_currency }} {{ project.budget_amount }}</td>
+        <td>{{ project.budget_currency }} {{ project.spent_amount }}</td>
+        <td>{{ project.percent_spent }}%</td>
+        <td>{{ project.end_date|default:"—" }}</td>
+        <td><a href="{% url 'projects:project_detail' project.pk %}" class="btn btn-secondary btn-sm">Open</a></td>
+      </tr>
+      {% empty %}<tr><td colspan="8">No projects yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Activities — Integrity South Sudan{% endblock %}
+{% block content %}
+<h1>Our Activities</h1>
+<div class="feed-filters">
+  <a href="{% url 'activities:public_list' %}" class="filter-chip {% if not active_type %}active{% endif %}">All</a>
+  {% for value, label in types %}
+    <a href="?type={{ value }}" class="filter-chip {% if active_type == value %}active{% endif %}">{{ label }}</a>
+  {% endfor %}
+</div>
+<div class="news-grid">
+  {% for item in activities %}
+  <a href="{% url 'activities:public_detail' item.pk %}" class="news-card">
+    <div class="news-card-media">
+      {% if item.thumbnail %}<img src="{{ item.thumbnail.url }}" alt="{{ item.title }}">
+      {% elif item.youtube_thumbnail_url %}<img src="{{ item.youtube_thumbnail_url }}" alt="{{ item.title }}"><span class="play-icon">▶</span>
+      {% else %}<div class="news-card-placeholder"></div>{% endif %}
+    </div>
+    <div class="news-card-body">
+      <span class="news-card-category">{{ item.get_activity_type_display }}</span>
+      <h3>{{ item.title }}</h3>
+      <p>{{ item.venue }} — {{ item.date }}</p>
+    </div>
+  </a>
+  {% empty %}<p>No activities published yet.</p>{% endfor %}
+</div>
+{% endblock %}

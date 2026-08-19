@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Integrity South Sudan — Transparency, Accountability, Impact{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>Standing for Integrity in South Sudan</h1>
+    <p>Advancing transparency, accountability, and civic engagement through governance, media advocacy, and community-driven change across South Sudan.</p>
+    <div class="hero-actions">
+      <a href="{% url 'about:public_about' %}" class="btn btn-primary">Learn More</a>
+      <a href="{% url 'partners:partner_request_create' %}" class="btn btn-secondary">Partner With Us</a>
+      <a href="{% url 'donations:donate' %}" class="btn" style="background:var(--color-red); color:#fff;">Donate Now</a>
+    </div>
+  </div>
+</section>
+
+{% if featured_achievements %}
+<section class="featured-section">
+  <h2 class="section-title">Our Impact</h2>
+  <div class="featured-grid">
+    {% for item in featured_achievements %}
+    <a href="{% url 'achievements:public_detail' item.pk %}" class="featured-card">
+      <div class="featured-card-media">
+        {% if item.thumbnail %}
+          <img src="{{ item.thumbnail.url }}" alt="{{ item.title }}">
+        {% elif item.youtube_thumbnail_url %}
+          <img src="{{ item.youtube_thumbnail_url }}" alt="{{ item.title }}">
+          <span class="play-icon">▶</span>
+        {% else %}
+          <div class="news-card-placeholder"></div>
+        {% endif %}
+      </div>
+      <div class="featured-card-body">
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.description|truncatechars:150 }}</p>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section>
+  <h2 class="section-title">Latest Updates</h2>
+  <div class="feed-filters">
+    <a href="{% url 'newsfeed:landing' %}" class="filter-chip {% if not active_category %}active{% endif %}">All</a>
+    {% for value, label in categories %}
+      <a href="?category={{ value }}" class="filter-chip {% if active_category == value %}active{% endif %}">{{ label }}</a>
+    {% endfor %}
+  </div>
+
+  <div class="news-grid">
+    {% for post in posts %}
+    <a href="{% url 'newsfeed:post_detail' post.pk %}" class="news-card">
+      <div class="news-card-media">
+        {% if post.thumbnail %}
+          <img src="{{ post.thumbnail.url }}" alt="{{ post.title }}">
+        {% elif post.youtube_thumbnail_url %}
+          <img src="{{ post.youtube_thumbnail_url }}" alt="{{ post.title }}">
+          <span class="play-icon">▶</span>
+        {% else %}
+          <div class="news-card-placeholder"></div>
+        {% endif %}
+      </div>
+      <div class="news-card-body">
+        <span class="news-card-category">{{ post.get_category_display }}</span>
+        <h3>{{ post.title }}</h3>
+        <p>{{ post.brief_description }}</p>
+        <small>{{ post.created_at|timesince }} ago</small>
+      </div>
+    </a>
+    {% empty %}
+    <p>No news posted yet — check back soon.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

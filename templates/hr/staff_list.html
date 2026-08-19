@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Staff Directory{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+  <h1>Staff Directory</h1>
+  <a href="{% url 'hr:staff_create' %}" class="btn btn-primary">+ Add Staff</a>
+</div>
+<div class="card" style="overflow-x:auto;">
+  <table class="data-table">
+    <thead>
+      <tr><th>Name</th><th>Position</th><th>Department</th><th>Status</th><th>Salary</th><th>Joined</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for member in staff %}
+      <tr>
+        <td>{{ member.full_name }}</td>
+        <td>{{ member.position }}</td>
+        <td>{{ member.department }}</td>
+        <td><span class="status-pill status-{{ member.status }}">{{ member.get_status_display }}</span></td>
+        <td>{{ member.salary_currency }} {{ member.salary_amount }}</td>
+        <td>{{ member.date_of_joining }}</td>
+        <td><a href="{% url 'hr:staff_detail' member.pk %}" class="btn btn-secondary btn-sm">View</a></td>
+      </tr>
+      {% empty %}<tr><td colspan="7">No staff records yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

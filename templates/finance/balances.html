@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Finance Overview{% endblock %}
+{% block content %}
+<h1>Organization Funds</h1>
+<div class="balance-grid">
+  <div class="balance-tile"><div class="amount">${{ balance.cash_usd }}</div><div class="label">Cash at Hand (USD)</div></div>
+  <div class="balance-tile"><div class="amount">SSP {{ balance.cash_ssp }}</div><div class="label">Cash at Hand (SSP)</div></div>
+  <div class="balance-tile"><div class="amount">${{ balance.bank_usd }}</div><div class="label">In Bank (USD)</div></div>
+  <div class="balance-tile"><div class="amount">SSP {{ balance.bank_ssp }}</div><div class="label">In Bank (SSP)</div></div>
+</div>
+
+<div class="dashboard-header">
+  <h2 style="margin:0;">Recent Transactions</h2>
+  <a href="{% url 'finance:transaction_create' %}" class="btn btn-primary">+ Record Income/Expense</a>
+</div>
+<div class="card" style="overflow-x:auto;">
+  <table class="data-table">
+    <thead><tr><th>Date</th><th>Type</th><th>Account</th><th>Currency</th><th>Amount</th><th>Description</th></tr></thead>
+    <tbody>
+      {% for t in transactions %}
+      <tr>
+        <td>{{ t.date }}</td>
+        <td>{{ t.get_transaction_type_display }}</td>
+        <td>{{ t.get_account_type_display }}</td>
+        <td>{{ t.currency }}</td>
+        <td>{{ t.amount }}</td>
+        <td>{{ t.description|truncatechars:60 }}</td>
+      </tr>
+      {% empty %}<tr><td colspan="6">No transactions recorded yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

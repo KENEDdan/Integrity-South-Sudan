@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Reset Password{% endblock %}
+{% block content %}
+<h1>Reset Password for {{ account.username }}?</h1>
+<p>This will generate a new temporary password and require them to set a new one on next login.</p>
+<form method="post" class="card">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-danger">Confirm Reset</button>
+</form>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Payroll{% endblock %}
+{% block content %}
+<h1>Payroll</h1>
+<div class="balance-grid">
+  <div class="balance-tile"><div class="amount">${{ totals.USD }}</div><div class="label">Monthly Salary Total (USD)</div></div>
+  <div class="balance-tile"><div class="amount">SSP {{ totals.SSP }}</div><div class="label">Monthly Salary Total (SSP)</div></div>
+</div>
+<div class="dashboard-header"><h2 style="margin:0;">Payroll Runs</h2>
+  <a href="{% url 'hr:payroll_add' %}" class="btn btn-primary btn-sm">+ New Run</a>
+</div>
+<div class="card" style="overflow-x:auto;">
+  <table class="data-table">
+    <thead><tr><th>Period</th><th>Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      {% for run in runs %}
+      <tr><td>{{ run.period_label }}</td><td><span class="status-pill status-active">{{ run.get_status_display }}</span></td><td>{{ run.notes|default:"—" }}</td></tr>
+      {% empty %}<tr><td colspan="3">No payroll runs yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+<p style="font-size:0.8rem; opacity:0.7; margin-top:1rem;">
+  Staff advances and deductions route through <a href="{% url 'finance:request_create' %}">Financial Requests</a> to Finance, so they stay in the same approval trail as other spending rather than a separate system.
+</p>
+{% endblock %}

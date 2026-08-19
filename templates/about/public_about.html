@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}About Us — Integrity South Sudan{% endblock %}
+{% block content %}
+<h1>About Us</h1>
+
+<div class="card" style="margin-bottom:1.5rem;">
+  <h3 class="form-section-title">Who We Are</h3>
+  <div class="post-body">{{ info.executive_summary|linebreaks }}</div>
+</div>
+
+<div class="balance-grid" style="margin-bottom:1.5rem;">
+  <div class="card" style="text-align:left;">
+    <h3 class="form-section-title">Our Vision</h3>
+    <p>{{ info.vision }}</p>
+  </div>
+  <div class="card" style="text-align:left;">
+    <h3 class="form-section-title">Our Mission</h3>
+    <p>{{ info.mission }}</p>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:1.5rem;">
+  <h3 class="form-section-title">Core Values</h3>
+  <div class="post-body">{{ info.core_values|linebreaks }}</div>
+</div>
+
+<div class="card" style="margin-bottom:1.5rem;">
+  <h3 class="form-section-title">What We Do</h3>
+  <div class="post-body">{{ info.thematic_areas|linebreaks }}</div>
+</div>
+
+<div class="card" style="margin-bottom:1.5rem;">
+  <h3 class="form-section-title">Strategic Objectives</h3>
+  <div class="post-body">{{ info.strategic_objectives|linebreaks }}</div>
+</div>
+
+{% if info.key_achievements_summary %}
+<div class="card" style="margin-bottom:1.5rem;">
+  <h3 class="form-section-title">Key Achievements</h3>
+  <div class="post-body">{{ info.key_achievements_summary|linebreaks }}</div>
+  <a href="{% url 'achievements:public_list' %}">See all achievements</a>
+</div>
+{% endif %}
+
+<div class="card" style="margin-bottom:1.5rem;">
+  <h3 class="form-section-title">Leadership</h3>
+  <p>{{ info.leadership_note }} <a href="{% url 'leadership:public_list' %}">Meet the team</a>.</p>
+</div>
+
+{% if info.partners_note %}
+<div class="card">
+  <h3 class="form-section-title">Our Partners</h3>
+  <div class="post-body">{{ info.partners_note|linebreaks }}</div>
+  <a href="{% url 'partners:public_list' %}">See all partners</a>
+</div>
+{% endif %}
+{% endblock %}

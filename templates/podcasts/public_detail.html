@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{{ podcast.title }}{% endblock %}
+{% block content %}
+<article class="card">
+  <h1>{{ podcast.title }}</h1>
+  {% if podcast.is_youtube %}
+    <div class="video-embed"><iframe src="{{ podcast.youtube_embed_url }}" frameborder="0" allowfullscreen></iframe></div>
+  {% else %}
+    <p><a href="{{ podcast.video_url }}" target="_blank" class="btn btn-primary">Watch / Listen</a></p>
+  {% endif %}
+  <div class="post-body">{{ podcast.content|linebreaks }}</div>
+</article>
+{% endblock %}

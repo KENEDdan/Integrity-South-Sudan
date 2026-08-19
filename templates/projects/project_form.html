@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}{{ mode }} Project{% endblock %}
+{% block content %}
+<h1>{{ mode }} Project</h1>
+<form method="post" class="card">
+  {% csrf_token %}
+  <div class="form-group">{{ form.name.label_tag }} {{ form.name }}</div>
+  <div class="form-grid">
+    <div class="form-group">{{ form.thematic_area.label_tag }} {{ form.thematic_area }}</div>
+    <div class="form-group">{{ form.status.label_tag }} {{ form.status }}</div>
+    <div class="form-group">{{ form.location.label_tag }} {{ form.location }}</div>
+    <div class="form-group">{{ form.program_manager.label_tag }} {{ form.program_manager }}</div>
+  </div>
+  <div class="form-group">{{ form.description.label_tag }} {{ form.description }}</div>
+  <div class="form-grid">
+    <div class="form-group">{{ form.start_date.label_tag }} {{ form.start_date }}</div>
+    <div class="form-group">{{ form.end_date.label_tag }} {{ form.end_date }}</div>
+    <div class="form-group">{{ form.donor.label_tag }} {{ form.donor }}</div>
+    <div class="form-group">{{ form.budget_amount.label_tag }} {{ form.budget_amount }}</div>
+    <div class="form-group">{{ form.budget_currency.label_tag }} {{ form.budget_currency }}</div>
+  </div>
+  <button type="submit" class="btn btn-primary" style="margin-top:1rem;">Save Project</button>
+</form>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Leadership — Integrity South Sudan{% endblock %}
+{% block content %}
+<h1>Our Leadership</h1>
+<div class="news-grid">
+  {% for leader in leaders %}
+  <a href="{% url 'leadership:public_detail' leader.pk %}" class="news-card">
+    <div class="news-card-media">
+      {% if leader.photo %}<img src="{{ leader.photo.url }}" alt="{{ leader.name }}">{% else %}<div class="news-card-placeholder"></div>{% endif %}
+    </div>
+    <div class="news-card-body">
+      <h3>{{ leader.name }}</h3>
+      <p>{{ leader.title }}</p>
+    </div>
+  </a>
+  {% empty %}<p>No leadership profiles published yet.</p>{% endfor %}
+</div>
+{% endblock %}

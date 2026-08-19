@@ -1,0 +1,189 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Integrity South Sudan{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-left">
+      <button class="hamburger-btn" id="hamburgerBtn" type="button" aria-label="Menu">☰</button>
+      <a href="{% url 'newsfeed:landing' %}" class="brand">
+        <img src="{% static 'images/logo.jpg' %}" alt="Integrity South Sudan logo">
+        <div class="brand-name">INTEGRITY<span>South Sudan</span></div>
+      </a>
+    </div>
+    <div class="nav-actions">
+      <div id="google_translate_element" class="translate-widget"></div>
+      <div class="lang-toggle">
+        <button type="button" class="lang-btn" data-lang="en" onclick="setSiteLanguage('en')">EN</button>
+        <button type="button" class="lang-btn" data-lang="ar" onclick="setSiteLanguage('ar')">عربي</button>
+      </div>
+      <button class="theme-toggle" id="themeToggle" type="button">
+        <span class="theme-icon">🌙</span><span class="btn-label">Dark mode</span>
+      </button>
+      <a href="{% url 'donations:donate' %}" class="btn btn-donate">Donate</a>
+      {% if user.is_authenticated %}
+        <div style="position:relative;">
+          <button class="notification-bell" id="notifBellBtn" type="button">
+            🔔
+            {% if nav_unread_count > 0 %}<span class="notification-badge">{{ nav_unread_count }}</span>{% endif %}
+          </button>
+          <div class="notification-dropdown" id="notifDropdown">
+            {% for n in nav_notifications %}
+              <a href="{% url 'notifications:mark_read' n.pk %}" class="notification-item {% if not n.is_read %}unread{% endif %}">
+                {{ n.message }}
+                <small>{{ n.created_at|timesince }} ago</small>
+              </a>
+            {% empty %}
+              <div class="notification-item">No notifications yet.</div>
+            {% endfor %}
+          </div>
+        </div>
+        <a href="{% url 'accounts:dashboard' %}" class="btn btn-secondary">Dashboard</a>
+        <form method="post" action="{% url 'accounts:logout' %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Log out</button>
+        </form>
+      {% endif %}
+    </div>
+  </header>
+
+  <div class="hamburger-drawer" id="hamburgerDrawer">
+    <nav class="drawer-nav">
+      <a href="{% url 'newsfeed:landing' %}">Home</a>
+      <a href="{% url 'achievements:public_list' %}">Achievements</a>
+      <a href="{% url 'activities:public_list' %}">Activities</a>
+      <a href="{% url 'partners:public_list' %}">Partners</a>
+      <a href="{% url 'podcasts:public_list' %}">Podcasts</a>
+      <a href="{% url 'leadership:public_list' %}">Leadership</a>
+      <a href="{% url 'about:public_about' %}">About Us</a>
+      <a href="{% url 'contact:public_contact' %}">Contact</a>
+      <a href="{% url 'donations:donate' %}">Donate</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'accounts:dashboard' %}">Admin Dashboard</a>
+      {% else %}
+        <a href="{% url 'accounts:login' %}">Admin Portal Login</a>
+      {% endif %}
+    </nav>
+  </div>
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+
+  <main class="page">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-error{% else %}alert-success{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <img src="{% static 'images/logo.jpg' %}" alt="Integrity South Sudan" style="height:56px; margin-bottom:0.75rem;">
+        <p>Advancing transparency, accountability, and civic engagement across South Sudan.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="{% url 'about:public_about' %}">About Us</a>
+        <a href="{% url 'achievements:public_list' %}">Achievements</a>
+        <a href="{% url 'activities:public_list' %}">Activities</a>
+        <a href="{% url 'partners:public_list' %}">Partners</a>
+        <a href="{% url 'leadership:public_list' %}">Leadership</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        {% if footer_contact.physical_address %}<p>{{ footer_contact.physical_address }}</p>{% endif %}
+        {% if footer_contact.phone_primary %}<p>{{ footer_contact.phone_primary }}</p>{% endif %}
+        {% if footer_contact.email_general %}<p>{{ footer_contact.email_general }}</p>{% endif %}
+        <a href="{% url 'contact:public_contact' %}">Full contact details</a>
+      </div>
+      <div class="footer-col">
+        <h4>Stay Connected</h4>
+        <form class="newsletter-form">
+          <input type="email" placeholder="Your email address" class="form-input" required>
+          <button type="submit" class="btn btn-primary">Subscribe</button>
+        </form>
+        <div style="margin-top:1rem;">
+          {% include "includes/social_links.html" with social=footer_contact %}
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; {% now "Y" %} Integrity South Sudan. All rights reserved.</div>
+  </footer>
+
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'en,ar' }, 'google_translate_element');
+    }
+  </script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+  <script>
+    // Theme toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = themeToggle.querySelector('.theme-icon');
+    const themeLabel = themeToggle.querySelector('.btn-label');
+    const htmlEl = document.documentElement;
+    themeToggle.addEventListener('click', () => {
+      const isDark = htmlEl.getAttribute('data-theme') === 'dark';
+      htmlEl.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      themeIcon.textContent = isDark ? '🌙' : '☀️';
+      themeLabel.textContent = isDark ? 'Dark mode' : 'Light mode';
+    });
+
+    // Notification bell dropdown
+    const bellBtn = document.getElementById('notifBellBtn');
+    const dropdown = document.getElementById('notifDropdown');
+    if (bellBtn) {
+      bellBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle('open');
+      });
+      document.addEventListener('click', () => dropdown.classList.remove('open'));
+    }
+
+    // Hamburger drawer
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const drawer = document.getElementById('hamburgerDrawer');
+    const overlay = document.getElementById('drawerOverlay');
+    function closeDrawer() {
+      drawer.classList.remove('open');
+      overlay.classList.remove('open');
+    }
+    hamburgerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      drawer.classList.toggle('open');
+      overlay.classList.toggle('open');
+    });
+    overlay.addEventListener('click', closeDrawer);
+
+    // Compact language toggle — drives Google Translate via its cookie, no visible Google UI
+    function setSiteLanguage(lang) {
+      const hostname = window.location.hostname;
+      if (lang === 'en') {
+        document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + hostname;
+      } else {
+        document.cookie = 'googtrans=/en/' + lang + '; path=/;';
+      }
+      window.location.reload();
+    }
+    (function () {
+      const match = document.cookie.match(/googtrans=\/en\/(\w+)/);
+      const current = match ? match[1] : 'en';
+      document.querySelectorAll('.lang-btn').forEach((btn) => {
+        if (btn.dataset.lang === current) btn.classList.add('active');
+      });
+    })();
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

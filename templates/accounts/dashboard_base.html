@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-header">
+  <div>
+    <h1>Welcome, {{ user.get_full_name|default:user.username }}</h1>
+    <span class="role-badge">{{ user.get_role_display }}</span>
+  </div>
+</div>
+<div class="dashboard-grid">
+  {% block tiles %}{% endblock %}
+</div>
+{% endblock %}

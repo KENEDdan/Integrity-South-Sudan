@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Achievements — Integrity South Sudan{% endblock %}
+{% block content %}
+<h1>Our Achievements</h1>
+<div class="news-grid">
+  {% for item in achievements %}
+  <a href="{% url 'achievements:public_detail' item.pk %}" class="news-card">
+    <div class="news-card-media">
+      {% if item.thumbnail %}
+        <img src="{{ item.thumbnail.url }}" alt="{{ item.title }}">
+      {% elif item.youtube_thumbnail_url %}
+        <img src="{{ item.youtube_thumbnail_url }}" alt="{{ item.title }}">
+        <span class="play-icon">▶</span>
+      {% else %}
+        <div class="news-card-placeholder"></div>
+      {% endif %}
+    </div>
+    <div class="news-card-body">
+      <h3>{{ item.title }}</h3>
+      <p>{{ item.description|truncatechars:120 }}</p>
+    </div>
+  </a>
+  {% empty %}<p>No achievements published yet.</p>{% endfor %}
+</div>
+{% endblock %}

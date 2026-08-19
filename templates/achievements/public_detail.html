@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ achievement.title }}{% endblock %}
+{% block content %}
+<article class="card">
+  <h1>{{ achievement.title }}</h1>
+  {% if achievement.youtube_embed_url %}
+    <div class="video-embed"><iframe src="{{ achievement.youtube_embed_url }}" frameborder="0" allowfullscreen></iframe></div>
+  {% elif achievement.thumbnail %}
+    <img src="{{ achievement.thumbnail.url }}" alt="{{ achievement.title }}" style="width:100%; border-radius:8px; margin:1rem 0;">
+  {% endif %}
+  <div class="post-body">{{ achievement.description|linebreaks }}</div>
+
+  {% if achievement.gallery.all %}
+    <h3 class="form-section-title">Gallery</h3>
+    <div class="gallery-grid">
+      {% for item in achievement.gallery.all %}
+        <div class="gallery-item">
+          {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.caption }}">
+          {% elif item.youtube_embed_url %}<div class="video-embed"><iframe src="{{ item.youtube_embed_url }}" frameborder="0" allowfullscreen></iframe></div>{% endif %}
+          {% if item.caption %}<p class="gallery-caption">{{ item.caption }}</p>{% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</article>
+{% endblock %}

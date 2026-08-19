@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Confirm Disbursement{% endblock %}
+{% block content %}
+<h1>Confirm Disbursement — Request #{{ fin_request.pk }}</h1>
+<div class="card" style="margin-bottom:1.5rem;">
+  <p><strong>Requested by:</strong> {{ fin_request.requested_by.get_full_name|default:fin_request.requested_by.username }}</p>
+  <p><strong>Amount:</strong> {{ fin_request.currency }} {{ fin_request.amount }}</p>
+  <p><strong>Approved by Super Admin:</strong> {{ fin_request.decided_by_super_admin }}</p>
+</div>
+<form method="post" class="card">
+  {% csrf_token %}
+  <div class="form-group">{{ form.account_type.label_tag }} {{ form.account_type }}</div>
+  <button type="submit" class="btn btn-primary">Confirm Disbursement</button>
+</form>
+{% endblock %}

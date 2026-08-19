@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}My Financial Requests{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+  <h1>My Financial Requests</h1>
+  <a href="{% url 'finance:request_create' %}" class="btn btn-primary">+ New Request</a>
+</div>
+<div class="card" style="overflow-x:auto;">
+  <table class="data-table">
+    <thead><tr><th>Date</th><th>Amount</th><th>Category</th><th>Status</th><th>Notes</th><th></th></tr></thead>
+    <tbody>
+      {% for r in requests %}
+      <tr>
+        <td>{{ r.created_at|date:"d M Y" }}</td>
+        <td>{{ r.currency }} {{ r.amount }}</td>
+        <td>{{ r.get_category_display }}</td>
+        <td><span class="status-pill">{{ r.get_status_display }}</span></td>
+        <td>{{ r.super_admin_notes|default:"—" }}</td>
+        <td>
+          {% if r.status == "info_requested" %}
+            <a href="{% url 'finance:submit_additional_info' r.pk %}" class="btn btn-secondary btn-sm">Respond</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}<tr><td colspan="6">You haven't submitted any requests yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

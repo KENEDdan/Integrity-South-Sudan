@@ -1,0 +1,68 @@
+{% extends "accounts/dashboard_base.html" %}
+{% block tiles %}
+<div class="dashboard-tile"><h3>Organization Overview</h3><p>KPIs, budget utilization, risk & compliance, team performance.</p>
+  <a href="{% url 'reports:org_overview' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Send Announcement</h3><p>Message any admin role.</p>
+  <a href="{% url 'notifications:send_announcement' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile">
+  <h3>Organization Funds</h3>
+  <p>Cash: ${{ balance.cash_usd }} / SSP {{ balance.cash_ssp }}<br>Bank: ${{ balance.bank_usd }} / SSP {{ balance.bank_ssp }}</p>
+  <a href="{% url 'finance:dashboard_balances' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">View Finance Details</a>
+</div>
+<div class="dashboard-tile"><h3>Financial Requests</h3><p>Review requests forwarded by Finance.</p>
+  <a href="{% url 'finance:super_admin_queue' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Donations</h3><p>Confirm receipt and set Ecobank account details.</p>
+  <a href="{% url 'donations:donation_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Procurement</h3><p>Requisitions, purchase orders, and vendors.</p>
+  <a href="{% url 'procurement:requisition_queue' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Assets</h3><p>Vehicles and equipment register, with fuel/maintenance logs.</p>
+  <a href="{% url 'assets:asset_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Staff Directory</h3><p>Add, view, and manage staff records.</p>
+  <a href="{% url 'hr:staff_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>HR Compliance</h3><p>Expiring contracts, training, and missing documents.</p>
+  <a href="{% url 'hr:compliance_dashboard' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Projects & M&E</h3><p>{{ project_count }} project(s), {{ open_issue_count }} open issue(s), {{ pending_report_count }} report(s) pending.</p>
+  <a href="{% url 'projects:project_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>News Feed</h3><p>Publish and manage all news posts.</p>
+  <a href="{% url 'newsfeed:manage_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Achievements</h3><p>Manage achievement posts, including homepage-featured highlights.</p>
+  <a href="{% url 'achievements:manage_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Activities</h3><p>Manage all activities.</p>
+  <a href="{% url 'activities:manage_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Podcasts</h3><p>Manage podcast entries.</p>
+  <a href="{% url 'podcasts:manage_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>About Us</h3><p>Edit the organization's About Us content.</p>
+  <a href="{% url 'about:manage_about' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Leadership</h3><p>Add or edit leadership profiles.</p>
+  <a href="{% url 'leadership:manage_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Partner Requests</h3><p>Review pending "Partner with us" submissions.</p>
+  <a href="{% url 'partners:request_queue' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Contact Details</h3><p>Update the organization's public contact information.</p>
+  <a href="{% url 'contact:manage_contact' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Manage Admin Accounts</h3><p>Create, edit, and deactivate HR, Finance, Program Manager, and Media accounts.</p>
+  <a href="{% url 'accounts:admin_account_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Field Data (KoboToolBox)</h3><p>Submissions collected from field surveys.</p>
+  <a href="{% url 'field_data:submission_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+<div class="dashboard-tile"><h3>Audit Log</h3><p>View every action taken across the site.</p>
+  <a href="{% url 'audit:log_list' %}" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;">Open</a>
+</div>
+{% endblock %}

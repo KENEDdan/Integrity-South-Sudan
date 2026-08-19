@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Manage Activities{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+  <h1>Manage Activities</h1>
+  <a href="{% url 'activities:activity_create' %}" class="btn btn-primary">+ Add Activity</a>
+</div>
+<div class="card" style="overflow-x:auto;">
+  <table class="data-table">
+    <thead><tr><th>Title</th><th>Type</th><th>Date</th><th>Published</th><th></th></tr></thead>
+    <tbody>
+      {% for item in activities %}
+      <tr>
+        <td>{{ item.title }}</td>
+        <td>{{ item.get_activity_type_display }}</td>
+        <td>{{ item.date }}</td>
+        <td>{% if item.is_published %}<span class="status-pill status-active">Yes</span>{% else %}<span class="status-pill status-terminated">No</span>{% endif %}</td>
+        <td>
+          <a href="{% url 'activities:activity_edit' item.pk %}" class="btn btn-secondary btn-sm">Edit</a>
+          <a href="{% url 'activities:activity_delete' item.pk %}" class="btn btn-danger btn-sm">Delete</a>
+        </td>
+      </tr>
+      {% empty %}<tr><td colspan="5">No activities yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

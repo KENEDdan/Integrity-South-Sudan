@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Resource Library{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+  <h1>Resource Library</h1>
+  <a href="{% url 'media_library:resource_add' %}" class="btn btn-primary">+ Add Resource</a>
+</div>
+<form method="get" class="card" style="margin-bottom:1.5rem; display:flex; gap:0.75rem;">
+  <input type="text" name="q" value="{{ query }}" placeholder="Search by title or tag" class="form-input">
+  <button type="submit" class="btn btn-secondary">Search</button>
+</form>
+<div class="news-grid">
+  {% for resource in resources %}
+  <div class="news-card" style="cursor:default;">
+    <div class="news-card-media">
+      {% if resource.file %}<img src="{{ resource.file.url }}" alt="{{ resource.title }}">
+      {% else %}<div class="news-card-placeholder"></div>{% endif %}
+    </div>
+    <div class="news-card-body">
+      <span class="news-card-category">{{ resource.get_resource_type_display }}</span>
+      <h3>{{ resource.title }}</h3>
+      {% if resource.external_url %}<p><a href="{{ resource.external_url }}" target="_blank">Open link</a></p>{% endif %}
+      {% if resource.file %}<p><a href="{{ resource.file.url }}" target="_blank">Download</a></p>{% endif %}
+      <small>{{ resource.tags }}</small>
+    </div>
+  </div>
+  {% empty %}<p>No resources yet.</p>{% endfor %}
+</div>
+{% endblock %}

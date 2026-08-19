@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{{ leader.name }}{% endblock %}
+{% block content %}
+<article class="card">
+  {% if leader.photo %}<img src="{{ leader.photo.url }}" alt="{{ leader.name }}" style="width:200px; border-radius:8px; float:left; margin-right:1.5rem;">{% endif %}
+  <h1>{{ leader.name }}</h1>
+  <p style="color:var(--color-green); font-weight:600;">{{ leader.title }}</p>
+  {% if leader.qualifications %}<p><strong>Qualifications:</strong> {{ leader.qualifications }}</p>{% endif %}
+  <div class="post-body" style="clear:both; padding-top:1rem;">{{ leader.biography|linebreaks }}</div>
+</article>
+{% endblock %}

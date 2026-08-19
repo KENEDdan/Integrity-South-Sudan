@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Manage Podcasts{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+  <h1>Manage Podcasts</h1>
+  <a href="{% url 'podcasts:podcast_create' %}" class="btn btn-primary">+ Add Podcast</a>
+</div>
+<div class="card" style="overflow-x:auto;">
+  <table class="data-table">
+    <thead><tr><th>Title</th><th>Published</th><th>Added</th><th></th></tr></thead>
+    <tbody>
+      {% for podcast in podcasts %}
+      <tr>
+        <td>{{ podcast.title }}</td>
+        <td>{% if podcast.is_published %}<span class="status-pill status-active">Yes</span>{% else %}<span class="status-pill status-terminated">No</span>{% endif %}</td>
+        <td>{{ podcast.created_at|date:"d M Y" }}</td>
+        <td><a href="{% url 'podcasts:podcast_edit' podcast.pk %}" class="btn btn-secondary btn-sm">Edit</a></td>
+      </tr>
+      {% empty %}<tr><td colspan="4">No podcasts yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

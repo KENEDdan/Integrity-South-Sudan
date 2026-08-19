@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Donate — Integrity South Sudan{% endblock %}
+{% block content %}
+<div class="hero" style="margin-top:-2.5rem;">
+  <div class="hero-content">
+    <h1>Support Our Work</h1>
+    <p>Your donation helps us advance transparency, accountability, and civic engagement across South Sudan.</p>
+  </div>
+</div>
+
+<form method="post" class="card" style="max-width:520px; margin:0 auto;">
+  {% csrf_token %}
+  {{ form.website }}
+  <h3 class="form-section-title">Choose an Amount</h3>
+  <div class="amount-presets">
+    <button type="button" class="amount-chip" data-amount="10">$10</button>
+    <button type="button" class="amount-chip" data-amount="25">$25</button>
+    <button type="button" class="amount-chip" data-amount="50">$50</button>
+    <button type="button" class="amount-chip" data-amount="100">$100</button>
+  </div>
+  <div class="form-grid">
+    <div class="form-group">{{ form.amount.label_tag }} {{ form.amount }} {{ form.amount.errors }}</div>
+    <div class="form-group">{{ form.currency.label_tag }} {{ form.currency }} {{ form.currency.errors }}</div>
+  </div>
+  <div class="form-group">{{ form.frequency.label_tag }} {{ form.frequency }} {{ form.frequency.errors }}</div>
+
+  <h3 class="form-section-title">Your Details</h3>
+  <div class="form-group">{{ form.donor_name.label_tag }} {{ form.donor_name }} {{ form.donor_name.errors }}</div>
+  <div class="form-grid">
+    <div class="form-group">{{ form.donor_email.label_tag }} {{ form.donor_email }} {{ form.donor_email.errors }}</div>
+    <div class="form-group">{{ form.donor_phone.label_tag }} {{ form.donor_phone }} {{ form.donor_phone.errors }}</div>
+  </div>
+  <div class="form-group">{{ form.message.label_tag }} {{ form.message }} {{ form.message.errors }}</div>
+
+  <button type="submit" class="btn btn-primary" style="width:100%; margin-top:1rem;">Continue to Payment Instructions</button>
+</form>
+
+<script>
+  document.querySelectorAll('.amount-chip').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.getElementById('id_amount').value = btn.dataset.amount;
+    });
+  });
+</script>
+{% endblock %}

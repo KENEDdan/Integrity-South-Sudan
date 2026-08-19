@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Thank You — Integrity South Sudan{% endblock %}
+{% block content %}
+<h1>Thank You, {{ donation.donor_name }}!</h1>
+<div class="card">
+  <p>Your intended donation of <strong>{{ donation.currency }} {{ donation.amount }}</strong> has been recorded. To complete it, please transfer the amount using the details below.</p>
+
+  <p style="font-size:1.1rem; font-weight:700; color:var(--color-green); background:var(--color-surface); padding:0.75rem 1rem; border-radius:8px; display:inline-block;">
+    Reference: {{ donation.reference_code }}
+  </p>
+  <p style="font-size:0.85rem; opacity:0.8; margin-top:0.5rem;">Please quote this reference code in your bank transfer description.</p>
+
+  <h3 class="form-section-title">Bank Transfer Details</h3>
+  <p><strong>Bank:</strong> {{ settings.bank_name }}</p>
+  {% if settings.account_name %}<p><strong>Account Name:</strong> {{ settings.account_name }}</p>{% endif %}
+  {% if settings.account_number %}<p><strong>Account Number:</strong> {{ settings.account_number }}</p>{% endif %}
+  {% if settings.branch %}<p><strong>Branch:</strong> {{ settings.branch }}</p>{% endif %}
+  {% if settings.swift_code %}<p><strong>SWIFT Code:</strong> {{ settings.swift_code }}</p>{% endif %}
+  {% if settings.mobile_money_note %}<p><strong>Mobile Money:</strong> {{ settings.mobile_money_note }}</p>{% endif %}
+
+  <p style="margin-top:1rem;">{{ settings.instructions }}</p>
+</div>
+{% endblock %}

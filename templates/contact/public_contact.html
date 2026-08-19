@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Contact Us — Integrity South Sudan{% endblock %}
+{% block content %}
+<h1>Contact Us</h1>
+<div class="card">
+  {% if info.physical_address %}<p><strong>Address:</strong> {{ info.physical_address }}</p>{% endif %}
+  {% if info.postal_address %}<p><strong>Postal Address:</strong> {{ info.postal_address }}</p>{% endif %}
+  {% if info.phone_primary %}<p><strong>Phone:</strong> {{ info.phone_primary }}{% if info.phone_secondary %} / {{ info.phone_secondary }}{% endif %}</p>{% endif %}
+  {% if info.email_general %}<p><strong>Email:</strong> {{ info.email_general }}</p>{% endif %}
+  {% if info.email_media %}<p><strong>Media Inquiries:</strong> {{ info.email_media }}</p>{% endif %}
+  {% if info.office_hours %}<p><strong>Office Hours:</strong> {{ info.office_hours }}</p>{% endif %}
+
+  <div style="margin-top:1rem;">
+    {% include "includes/social_links.html" with social=info %}
+  </div>
+
+  {% if info.map_embed_url %}
+    <div class="video-embed" style="margin-top:1.5rem;"><iframe src="{{ info.map_embed_url }}" frameborder="0" allowfullscreen></iframe></div>
+  {% endif %}
+</div>
+{% endblock %}

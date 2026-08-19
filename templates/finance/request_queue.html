@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Financial Request Queue{% endblock %}
+{% block content %}
+<h1>Financial Request Queue</h1>
+
+<h3 class="form-section-title">Awaiting Your Review</h3>
+<div class="card" style="overflow-x:auto; margin-bottom:1.5rem;">
+  <table class="data-table">
+    <thead><tr><th>Requested By</th><th>Amount</th><th>Category</th><th>Reason</th><th></th></tr></thead>
+    <tbody>
+      {% for r in pending %}
+      <tr>
+        <td>{{ r.requested_by.get_full_name|default:r.requested_by.username }}</td>
+        <td>{{ r.currency }} {{ r.amount }}</td>
+        <td>{{ r.get_category_display }}</td>
+        <td>{{ r.reason|truncatechars:60 }}</td>
+        <td><a href="{% url 'finance:forward_request' r.pk %}" class="btn btn-primary btn-sm">Forward to Super Admin</a></td>
+      </tr>
+      {% empty %}<tr><td colspan="5">Nothing pending.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<h3 class="form-section-title">Approved — Ready to Disburse</h3>
+<div class="card" style="overflow-x:auto; margin-bottom:1.5rem;">
+  <table class="data-table">
+    <thead><tr><th>Requested By</th><th>Amount</th><th>Super Admin Notes</th><th></th></tr></thead>
+    <tbody>
+      {% for r in approved_awaiting %}
+      <tr>
+        <td>{{ r.requested_by.get_full_name|default:r.requested_by.username }}</td>
+        <td>{{ r.currency }} {{ r.amount }}</td>
+        <td>{{ r.super_admin_notes|default:"—" }}</td>
+        <td><a href="{% url 'finance:confirm_disbursement' r.pk %}" class="btn btn-primary btn-sm">Confirm Disbursement</a></td>
+      </tr>
+      {% empty %}<tr><td colspan="4">Nothing awaiting disbursement.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<h3 class="form-section-title">Declined — Awaiting Your Acknowledgement</h3>
+<div class="card" style="overflow-x:auto;">
+  <table class="data-table">
+    <thead><tr><th>Requested By</th><th>Amount</th><th>Decline Reason</th><th></th></tr></thead>
+    <tbody>
+      {% for r in declined_awaiting %}
+      <tr>
+        <td>{{ r.requested_by.get_full_name|default:r.requested_by.username }}</td>
+        <td>{{ r.currency }} {{ r.amount }}</td>
+        <td>{{ r.super_admin_notes|default:"—" }}</td>
+        <td>
+          <form method="post" action="{% url 'finance:acknowledge_decline' r.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Acknowledge</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}<tr><td colspan="4">Nothing to acknowledge.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

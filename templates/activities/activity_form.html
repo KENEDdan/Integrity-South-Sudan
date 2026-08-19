@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}{{ mode }} Activity{% endblock %}
+{% block content %}
+<h1>{{ mode }} Activity</h1>
+<form method="post" enctype="multipart/form-data" class="card">
+  {% csrf_token %}
+  <div class="form-group">{{ form.title.label_tag }} {{ form.title }}</div>
+  <div class="form-grid">
+    <div class="form-group">{{ form.activity_type.label_tag }} {{ form.activity_type }}</div>
+    <div class="form-group">{{ form.date.label_tag }} {{ form.date }}</div>
+    <div class="form-group">{{ form.venue.label_tag }} {{ form.venue }}</div>
+    <div class="form-group">{{ form.sponsors.label_tag }} {{ form.sponsors }}</div>
+  </div>
+  <div class="form-group">{{ form.description.label_tag }} {{ form.description }}</div>
+  <div class="form-grid">
+    <div class="form-group">{{ form.thumbnail.label_tag }} {{ form.thumbnail }}</div>
+    <div class="form-group">{{ form.youtube_url.label_tag }} {{ form.youtube_url }}</div>
+  </div>
+  <div class="form-group"><label style="font-weight:normal;">{{ form.is_published }} {{ form.is_published.label }}</label></div>
+
+  <h3 class="form-section-title">Gallery (additional images/videos)</h3>
+  {{ formset.management_form }}
+  {% for media_form in formset %}
+    <div class="form-grid" style="border-bottom:1px solid var(--color-border); padding-bottom:1rem; margin-bottom:1rem;">
+      <div class="form-group">{{ media_form.image.label_tag }} {{ media_form.image }}</div>
+      <div class="form-group">{{ media_form.youtube_url.label_tag }} {{ media_form.youtube_url }}</div>
+      <div class="form-group">{{ media_form.caption.label_tag }} {{ media_form.caption }}</div>
+      {% if media_form.instance.pk %}<div class="form-group">{{ media_form.DELETE }} Remove</div>{% endif %}
+      {{ media_form.id }}
+    </div>
+  {% endfor %}
+  <button type="submit" class="btn btn-primary" style="margin-top:1rem;">Save Activity</button>
+</form>
+{% endblock %}

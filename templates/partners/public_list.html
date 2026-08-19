@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Our Partners — Integrity South Sudan{% endblock %}
+{% block content %}
+<h1>Our Partners</h1>
+<div class="news-grid">
+  {% for partner in partners %}
+  <div class="news-card" style="cursor:default;">
+    <div class="news-card-media">
+      {% if partner.logo %}<img src="{{ partner.logo.url }}" alt="{{ partner.name }}">{% else %}<div class="news-card-placeholder"></div>{% endif %}
+    </div>
+    <div class="news-card-body">
+      <h3>{{ partner.name }}</h3>
+      <p>{{ partner.partnering_on }}</p>
+      {% if partner.validity_note %}<small>{{ partner.validity_note }}</small>{% endif %}
+    </div>
+  </div>
+  {% empty %}<p>No partners listed yet.</p>{% endfor %}
+</div>
+<div class="card" style="margin-top:2rem; text-align:center;">
+  <h3>Interested in partnering with us?</h3>
+  <a href="{% url 'partners:partner_request_create' %}" class="btn btn-primary" style="margin-top:0.75rem;">Partner With Us</a>
+</div>
+{% endblock %}

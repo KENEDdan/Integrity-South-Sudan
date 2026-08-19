@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ asset.name }}{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+  <h1>{{ asset.name }}</h1>
+  <a href="{% url 'assets:asset_edit' asset.pk %}" class="btn btn-secondary">Edit</a>
+</div>
+<div class="card" style="margin-bottom:1.5rem;">
+  <p><strong>Type:</strong> {{ asset.get_asset_type_display }} &nbsp; <strong>Identifier:</strong> {{ asset.identifier|default:"—" }}</p>
+  <p><strong>Assigned To:</strong> {{ asset.assigned_to.full_name|default:"Unassigned" }} &nbsp; <strong>Status:</strong> {{ asset.get_status_display }}</p>
+  {% if asset.notes %}<p><strong>Notes:</strong> {{ asset.notes }}</p>{% endif %}
+</div>
+<div class="dashboard-header"><h2 style="margin:0;">Fuel & Maintenance Log</h2>
+  <a href="{% url 'assets:log_add' asset.pk %}" class="btn btn-primary btn-sm">+ Add Log</a>
+</div>
+<div class="card" style="overflow-x:auto;">
+  <table class="data-table">
+    <thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Cost</th></tr></thead>
+    <tbody>
+      {% for log in asset.logs.all %}
+      <tr><td>{{ log.date }}</td><td>{{ log.get_log_type_display }}</td><td>{{ log.description|truncatechars:60 }}</td><td>{{ log.currency }} {{ log.cost }}</td></tr>
+      {% empty %}<tr><td colspan="4">No log entries yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

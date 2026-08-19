@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}{{ member.full_name }}{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+  <h1>{{ member.full_name }}</h1>
+  <a href="{% url 'hr:staff_edit' member.pk %}" class="btn btn-secondary">Edit</a>
+</div>
+<div class="card" style="margin-bottom:1.5rem;">
+  <h3 class="form-section-title">Personal Information</h3>
+  <p><strong>National ID/Passport:</strong> {{ member.national_id_or_passport }}</p>
+  <p><strong>Phone:</strong> {{ member.phone_number }} &nbsp; <strong>Email:</strong> {{ member.email }}</p>
+  <p><strong>Address:</strong> {{ member.residential_address }}</p>
+
+  <h3 class="form-section-title">Employment</h3>
+  <p><strong>Position:</strong> {{ member.position }} — {{ member.department }}</p>
+  <p><strong>Type:</strong> {{ member.get_employment_type_display }} &nbsp; <strong>Status:</strong> {{ member.get_status_display }}
+    {% if member.is_on_approved_leave_today %}<span class="status-pill status-on_leave">On Leave Today</span>{% endif %}</p>
+  <p><strong>Joined:</strong> {{ member.date_of_joining }} &nbsp;
+     <strong>Contract Ends:</strong> {{ member.contract_end_date|default:"—" }} &nbsp;
+     <strong>Probation Ends:</strong> {{ member.probation_end_date|default:"—" }}</p>
+
+  <h3 class="form-section-title">Compensation</h3>
+  <p><strong>Salary:</strong> {{ member.salary_currency }} {{ member.salary_amount }} ({{ member.get_pay_frequency_display }})</p>
+  <p><strong>Bank:</strong> {{ member.bank_name }} — {{ member.bank_account_number }}</p>
+
+  <h3 class="form-section-title">Emergency Contact</h3>
+  <p>{{ member.next_of_kin_name }} ({{ member.next_of_kin_relationship }}) — {{ member.next_of_kin_phone }}</p>
+</div>
+
+<div class="dashboard-header"><h2 style="margin:0;">Leave Requests</h2>
+  <a href="{% url 'hr:leave_add' member.pk %}" class="btn btn-primary btn-sm">+ Log Leave</a>
+</div>
+<div class="card" style="overflow-x:auto; margin-bottom:1.5rem;">
+  <table class="data-table">
+    <thead><tr><th>Type</th><th>Dates</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for leave in member.leave_requests.all %}
+      <tr>
+        <td>{{ leave.get_leave_type_display }}</td>
+        <td>{{ leave.start_date }} — {{ leave.end_date }}</td>
+        <td><span class="status-pill {% if leave.status == 'approved' %}status-active{% elif leave.status == 'declined' %}status-terminated{% else %}status-on_leave{% endif %}">{{ leave.get_status_display }}</span></td>
+        <td>{% if leave.status == "pending" %}<a href="{% url 'hr:leave_decide' member.pk leave.pk %}" class="btn btn-secondary btn-sm">Decide</a>{% endif %}</td>
+      </tr>
+      {% empty %}<tr><td colspan="4">No leave requests yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="dashboard-header"><h2 style="margin:0;">Training</h2>
+  <a href="{% url 'hr:training_add' member.pk %}" class="btn btn-primary btn-sm">+ Add Training</a>
+</div>
+<div class="card" style="overflow-x:auto; margin-bottom:1.5rem;">
+  <table class="data-table">
+    <thead><tr><th>Training</th><th>Due</th><th>Completed</th></tr></thead>
+    <tbody>
+      {% for t in member.trainings.all %}
+      <tr><td>{{ t.training_name }}</td><td>{{ t.due_date }}{% if t.is_overdue %} <span class="status-pill status-terminated">Overdue</span>{% endif %}</td><td>{{ t.completed_date|default:"—" }}</td></tr>
+      {% empty %}<tr><td colspan="3">No training records yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="dashboard-header"><h2 style="margin:0;">Documents</h2>
+  <a href="{% url 'hr:document_add' member.pk %}" class="btn btn-primary btn-sm">+ Upload Document</a>
+</div>
+<div class="card" style="overflow-x:auto;">
+  <table class="data-table">
+    <thead><tr><th>Type</th><th>Uploaded</th><th></th></tr></thead>
+    <tbody>
+      {% for doc in member.documents.all %}
+      <tr><td>{{ doc.get_document_type_display }}</td><td>{{ doc.uploaded_at|date:"d M Y" }}</td>
+      <td><a href="{{ doc.file.url }}" target="_blank" class="btn btn-secondary btn-sm">View</a></td></tr>
+      {% empty %}<tr><td colspan="3">No documents uploaded yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

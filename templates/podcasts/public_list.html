@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Podcasts — Integrity South Sudan{% endblock %}
+{% block content %}
+<h1>Podcasts</h1>
+<div class="news-grid">
+  {% for podcast in podcasts %}
+  <a href="{% url 'podcasts:public_detail' podcast.pk %}" class="news-card">
+    <div class="news-card-media">
+      {% if podcast.thumbnail %}<img src="{{ podcast.thumbnail.url }}" alt="{{ podcast.title }}">
+      {% elif podcast.is_youtube %}<img src="https://img.youtube.com/vi/{{ podcast.youtube_id }}/hqdefault.jpg" alt="{{ podcast.title }}"><span class="play-icon">▶</span>
+      {% else %}<div class="news-card-placeholder"></div>{% endif %}
+    </div>
+    <div class="news-card-body">
+      <h3>{{ podcast.title }}</h3>
+      <p>{{ podcast.content|truncatechars:100 }}</p>
+    </div>
+  </a>
+  {% empty %}<p>No podcasts published yet.</p>{% endfor %}
+</div>
+{% endblock %}

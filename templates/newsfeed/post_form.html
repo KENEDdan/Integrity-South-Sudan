@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}{{ mode }} News Post{% endblock %}
+{% block content %}
+<h1>{{ mode }} News Post</h1>
+<form method="post" enctype="multipart/form-data" class="card">
+  {% csrf_token %}
+
+  <h3 class="form-section-title">Post Details</h3>
+  <div class="form-group">{{ form.title.label_tag }} {{ form.title }}</div>
+  <div class="form-grid">
+    <div class="form-group">{{ form.category.label_tag }} {{ form.category }}</div>
+    <div class="form-group">{{ form.display_until.label_tag }} {{ form.display_until }}</div>
+  </div>
+  <div class="form-grid">
+    <div class="form-group">{{ form.category.label_tag }} {{ form.category }}</div>
+    <div class="form-group">{{ form.scheduled_for.label_tag }} {{ form.scheduled_for }}</div>
+    <div class="form-group">{{ form.display_until.label_tag }} {{ form.display_until }}</div>
+  </div>
+  <div class="form-group">{{ form.brief_description.label_tag }} {{ form.brief_description }}</div>
+  <div class="form-group">{{ form.body.label_tag }} {{ form.body }}</div>
+
+  <h3 class="form-section-title">Preview Media</h3>
+  <div class="form-grid">
+    <div class="form-group">{{ form.thumbnail.label_tag }} {{ form.thumbnail }}</div>
+    <div class="form-group">{{ form.youtube_url.label_tag }} {{ form.youtube_url }}</div>
+  </div>
+  <div class="form-group">
+    <label style="font-weight:normal;">{{ form.is_published }} {{ form.is_published.label }}</label>
+  </div>
+
+  <h3 class="form-section-title">Gallery (additional images/videos)</h3>
+  {{ formset.management_form }}
+  {% for media_form in formset %}
+    <div class="form-grid" style="border-bottom:1px solid var(--color-border); padding-bottom:1rem; margin-bottom:1rem;">
+      <div class="form-group">{{ media_form.image.label_tag }} {{ media_form.image }}</div>
+      <div class="form-group">{{ media_form.youtube_url.label_tag }} {{ media_form.youtube_url }}</div>
+      <div class="form-group">{{ media_form.caption.label_tag }} {{ media_form.caption }}</div>
+      {% if media_form.instance.pk %}<div class="form-group">{{ media_form.DELETE }} Remove</div>{% endif %}
+      {{ media_form.id }}
+    </div>
+  {% endfor %}
+
+  <button type="submit" class="btn btn-primary" style="margin-top:1rem;">Save Post</button>
+</form>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Donors{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+  <h1>Donors</h1>
+  <a href="{% url 'projects:donor_add' %}" class="btn btn-primary">+ Add Donor</a>
+</div>
+<div class="card" style="overflow-x:auto;">
+  <table class="data-table">
+    <thead><tr><th>Name</th><th>Contact Person</th><th>Email</th><th>Phone</th><th>Projects</th><th>Spent / Budget</th></tr></thead>
+    <tbody>
+      {% for stat in donor_stats %}
+      <tr>
+        <td>{{ stat.donor.name }}</td>
+        <td>{{ stat.donor.contact_person }}</td>
+        <td>{{ stat.donor.contact_email }}</td>
+        <td>{{ stat.donor.contact_phone }}</td>
+        <td>{{ stat.project_count }}</td>
+        <td>
+          {% for currency, figures in stat.by_currency.items %}
+            {{ currency }} {{ figures.spent }} / {{ figures.budget }}<br>
+          {% empty %}—{% endfor %}
+        </td>
+      </tr>
+      {% empty %}<tr><td colspan="6">No donors yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}{{ mode }} Staff{% endblock %}
+{% block content %}
+<h1>{{ mode }} Staff Member</h1>
+<form method="post" enctype="multipart/form-data" class="card">
+  {% csrf_token %}
+
+  <h3 class="form-section-title">Personal Information</h3>
+  <div class="form-grid">
+    <div class="form-group">{{ form.full_name.label_tag }} {{ form.full_name }}</div>
+    <div class="form-group">{{ form.date_of_birth.label_tag }} {{ form.date_of_birth }}</div>
+    <div class="form-group">{{ form.gender.label_tag }} {{ form.gender }}</div>
+    <div class="form-group">{{ form.national_id_or_passport.label_tag }} {{ form.national_id_or_passport }}</div>
+    <div class="form-group">{{ form.phone_number.label_tag }} {{ form.phone_number }}</div>
+    <div class="form-group">{{ form.email.label_tag }} {{ form.email }}</div>
+  </div>
+  <div class="form-group">{{ form.residential_address.label_tag }} {{ form.residential_address }}</div>
+
+  <h3 class="form-section-title">Emergency Contact</h3>
+  <div class="form-grid">
+    <div class="form-group">{{ form.next_of_kin_name.label_tag }} {{ form.next_of_kin_name }}</div>
+    <div class="form-group">{{ form.next_of_kin_phone.label_tag }} {{ form.next_of_kin_phone }}</div>
+    <div class="form-group">{{ form.next_of_kin_relationship.label_tag }} {{ form.next_of_kin_relationship }}</div>
+  </div>
+
+  <h3 class="form-section-title">Employment Information</h3>
+  <div class="form-grid">
+    <div class="form-group">{{ form.position.label_tag }} {{ form.position }}</div>
+    <div class="form-group">{{ form.department.label_tag }} {{ form.department }}</div>
+    <div class="form-group">{{ form.employment_type.label_tag }} {{ form.employment_type }}</div>
+    <div class="form-group">{{ form.date_of_joining.label_tag }} {{ form.date_of_joining }}</div>
+    <div class="form-group">{{ form.contract_end_date.label_tag }} {{ form.contract_end_date }}</div>
+    <div class="form-group">{{ form.probation_end_date.label_tag }} {{ form.probation_end_date }}</div>
+    <div class="form-group">{{ form.status.label_tag }} {{ form.status }}</div>
+  </div>
+
+  <h3 class="form-section-title">Compensation</h3>
+  <div class="form-grid">
+    <div class="form-group">{{ form.salary_amount.label_tag }} {{ form.salary_amount }}</div>
+    <div class="form-group">{{ form.salary_currency.label_tag }} {{ form.salary_currency }}</div>
+    <div class="form-group">{{ form.pay_frequency.label_tag }} {{ form.pay_frequency }}</div>
+  </div>
+
+  <h3 class="form-section-title">Banking Details</h3>
+  <div class="form-grid">
+    <div class="form-group">{{ form.bank_name.label_tag }} {{ form.bank_name }}</div>
+    <div class="form-group">{{ form.bank_account_number.label_tag }} {{ form.bank_account_number }}</div>
+  </div>
+
+  <h3 class="form-section-title">Photo</h3>
+  <div class="form-group">{{ form.photo.label_tag }} {{ form.photo }}</div>
+
+  <button type="submit" class="btn btn-primary" style="margin-top:1.5rem;">Save Staff Record</button>
+</form>
+{% endblock %}

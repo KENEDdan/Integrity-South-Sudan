@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Manage Leadership{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+  <h1>Manage Leadership</h1>
+  <a href="{% url 'leadership:leader_create' %}" class="btn btn-primary">+ Add Leader</a>
+</div>
+<div class="card" style="overflow-x:auto;">
+  <table class="data-table">
+    <thead><tr><th>Name</th><th>Title</th><th>Published</th><th></th></tr></thead>
+    <tbody>
+      {% for leader in leaders %}
+      <tr>
+        <td>{{ leader.name }}</td><td>{{ leader.title }}</td>
+        <td>{% if leader.is_published %}<span class="status-pill status-active">Yes</span>{% else %}<span class="status-pill status-terminated">No</span>{% endif %}</td>
+        <td><a href="{% url 'leadership:leader_edit' leader.pk %}" class="btn btn-secondary btn-sm">Edit</a></td>
+      </tr>
+      {% empty %}<tr><td colspan="4">No leaders yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
