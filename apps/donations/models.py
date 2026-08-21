@@ -4,6 +4,8 @@ from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
 
+from apps.core.validators import validate_document_extension, validate_document_size
+
 
 class Currency(models.TextChoices):
     USD = "USD", "US Dollar"
@@ -18,6 +20,7 @@ class DonationFrequency(models.TextChoices):
 class DonationStatus(models.TextChoices):
     PENDING = "pending", "Pending Confirmation"
     CONFIRMED = "confirmed", "Confirmed"
+    REJECTED = "rejected", "Proof Rejected"
 
 
 class DonationSettings(models.Model):
@@ -57,6 +60,11 @@ class Donation(models.Model):
     frequency = models.CharField(max_length=20, choices=DonationFrequency.choices, default=DonationFrequency.ONE_TIME)
     message = models.TextField(blank=True)
     status = models.CharField(max_length=20, choices=DonationStatus.choices, default=DonationStatus.PENDING)
+    proof_of_payment = models.FileField(
+        upload_to="donations/proofs/", blank=True, null=True,
+        validators=[validate_document_extension, validate_document_size],
+    )
+    proof_uploaded_at = models.DateTimeField(null=True, blank=True)
     confirmed_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL)
     confirmed_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

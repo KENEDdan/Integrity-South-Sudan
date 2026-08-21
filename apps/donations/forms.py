@@ -22,6 +22,17 @@ class DonationForm(forms.ModelForm):
                 field.widget.attrs["class"] = "form-input"
 
 
+class DonationProofForm(forms.ModelForm):
+    class Meta:
+        model = Donation
+        fields = ["proof_of_payment"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["proof_of_payment"].required = True
+        self.fields["proof_of_payment"].widget.attrs["class"] = "form-input"
+
+
 class DonationSettingsForm(forms.ModelForm):
     class Meta:
         model = DonationSettings

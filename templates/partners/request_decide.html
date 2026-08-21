@@ -7,7 +7,7 @@
   <p><strong>Contact:</strong> {{ partner_request.contact_email }} {{ partner_request.contact_phone }}</p>
   <p><strong>Reason:</strong> {{ partner_request.reason }}</p>
   {% if partner_request.contract_validity %}<p><strong>Proposed Validity:</strong> {{ partner_request.contract_validity }}</p>{% endif %}
-  {% if partner_request.registration_documents %}<p><a href="{{ partner_request.registration_documents.url }}" target="_blank">View Registration Documents</a></p>{% endif %}
+  {% if partner_request.registration_documents %}<p><a href="{% url 'partners:request_document_download' partner_request.pk %}" target="_blank">View Registration Documents</a></p>{% endif %}
   {% if partner_request.additional_info %}<p><strong>Additional info supplied:</strong> {{ partner_request.additional_info }}</p>{% endif %}
 </div>
 <form method="post" class="card">

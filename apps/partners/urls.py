@@ -13,4 +13,5 @@ urlpatterns = [
 
     path("manage/requests/", views.request_queue, name="request_queue"),
     path("manage/requests/<int:pk>/decide/", views.request_decide, name="request_decide"),
+    path("manage/requests/<int:pk>/documents/", views.request_document_download, name="request_document_download"),
 ]

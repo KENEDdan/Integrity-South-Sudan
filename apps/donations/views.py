@@ -1,3 +1,4 @@
+from django.http import FileResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db import transaction
@@ -5,7 +6,7 @@ from django.utils import timezone
 from apps.accounts.decorators import role_required
 from apps.audit.utils import log_action
 from .models import Donation, DonationSettings, DonationStatus
-from .forms import DonationForm, DonationSettingsForm
+from .forms import DonationForm, DonationProofForm, DonationSettingsForm
 
 
 def donate(request):
@@ -15,16 +16,31 @@ def donate(request):
             if form.cleaned_data.get("website"):
                 return redirect("donations:donate")  # honeypot tripped — drop it silently
             donation = form.save()
-            return redirect("donations:donate_thanks", pk=donation.pk)
+            return redirect("donations:donate_thanks", reference_code=donation.reference_code)
     else:
         form = DonationForm(initial={"amount": 25})
     return render(request, "donations/donate.html", {"form": form})
 
 
-def donate_thanks(request, pk):
-    donation = get_object_or_404(Donation, pk=pk)
+def donate_thanks(request, reference_code):
+    donation = get_object_or_404(Donation, reference_code=reference_code)
     settings_obj = DonationSettings.get_solo()
-    return render(request, "donations/donate_thanks.html", {"donation": donation, "settings": settings_obj})
+    proof_form = None
+    if donation.status in (DonationStatus.PENDING, DonationStatus.REJECTED):
+        if request.method == "POST":
+            proof_form = DonationProofForm(request.POST, request.FILES, instance=donation)
+            if proof_form.is_valid():
+                proof = proof_form.save(commit=False)
+                proof.proof_uploaded_at = timezone.now()
+                proof.status = DonationStatus.PENDING
+                proof.save()
+                messages.success(request, "Proof of payment uploaded — our finance team will review it shortly.")
+                return redirect("donations:donate_thanks", reference_code=reference_code)
+        else:
+            proof_form = DonationProofForm(instance=donation)
+    return render(request, "donations/donate_thanks.html", {
+        "donation": donation, "settings": settings_obj, "proof_form": proof_form,
+    })
 
 
 @role_required("finance")
@@ -38,6 +54,13 @@ def donation_list(request):
 def donation_confirm(request, pk):
     donation = get_object_or_404(Donation, pk=pk, status=DonationStatus.PENDING)
     if request.method == "POST":
+        if "reject" in request.POST:
+            donation.status = DonationStatus.REJECTED
+            donation.save()
+            log_action(request.user, "Rejected donation proof", donation.reference_code)
+            messages.success(request, "Donation rejected. The donor can resubmit proof of payment.")
+            return redirect("donations:donation_list")
+
         from apps.finance.models import Transaction
         Transaction.objects.create(
             transaction_type="income",
@@ -57,6 +80,17 @@ def donation_confirm(request, pk):
         messages.success(request, "Donation confirmed and recorded in Finance.")
         return redirect("donations:donation_list")
     return render(request, "donations/donation_confirm.html", {"donation": donation})
+
+
+@role_required("finance")
+def donation_proof_download(request, pk):
+    donation = get_object_or_404(Donation, pk=pk)
+    if not donation.proof_of_payment:
+        raise Http404
+    return FileResponse(
+        donation.proof_of_payment.open("rb"),
+        filename=donation.proof_of_payment.name.rsplit("/", 1)[-1],
+    )
 
 
 @role_required("super_admin")

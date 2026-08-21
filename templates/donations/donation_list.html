@@ -7,7 +7,7 @@
 </div>
 <div class="card" style="overflow-x:auto;">
   <table class="data-table">
-    <thead><tr><th>Reference</th><th>Donor</th><th>Amount</th><th>Frequency</th><th>Status</th><th></th></tr></thead>
+    <thead><tr><th>Reference</th><th>Donor</th><th>Amount</th><th>Frequency</th><th>Status</th><th>Proof</th><th></th></tr></thead>
     <tbody>
       {% for d in donations %}
       <tr>
@@ -16,9 +16,10 @@
         <td>{{ d.currency }} {{ d.amount }}</td>
         <td>{{ d.get_frequency_display }}</td>
         <td><span class="status-pill {% if d.status == 'confirmed' %}status-active{% else %}status-on_leave{% endif %}">{{ d.get_status_display }}</span></td>
-        <td>{% if d.status == "pending" %}<a href="{% url 'donations:donation_confirm' d.pk %}" class="btn btn-secondary btn-sm">Confirm Receipt</a>{% endif %}</td>
+        <td>{% if d.proof_of_payment %}<a href="{% url 'donations:donation_proof_download' d.pk %}" target="_blank">View</a>{% else %}—{% endif %}</td>
+        <td>{% if d.status == "pending" %}<a href="{% url 'donations:donation_confirm' d.pk %}" class="btn btn-secondary btn-sm">Review</a>{% endif %}</td>
       </tr>
-      {% empty %}<tr><td colspan="6">No donations yet.</td></tr>{% endfor %}
+      {% empty %}<tr><td colspan="7">No donations yet.</td></tr>{% endfor %}
     </tbody>
   </table>
 </div>

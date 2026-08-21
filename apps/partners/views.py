@@ -1,3 +1,4 @@
+from django.http import FileResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from apps.accounts.decorators import role_required
@@ -76,6 +77,17 @@ def request_queue(request):
         status__in=[PartnerRequestStatus.PENDING, PartnerRequestStatus.INFO_REQUESTED]
     )[:20]
     return render(request, "partners/request_queue.html", {"pending": pending, "decided": decided})
+
+
+@role_required("super_admin")
+def request_document_download(request, pk):
+    partner_request = get_object_or_404(PartnerRequest, pk=pk)
+    if not partner_request.registration_documents:
+        raise Http404
+    return FileResponse(
+        partner_request.registration_documents.open("rb"),
+        filename=partner_request.registration_documents.name.rsplit("/", 1)[-1],
+    )
 
 
 @role_required("super_admin")

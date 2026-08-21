@@ -11,7 +11,7 @@
     <tbody>
       {% for policy in policies %}
       <tr><td>{{ policy.title }}</td><td>{{ policy.uploaded_at|date:"d M Y" }}</td>
-      <td><a href="{{ policy.file.url }}" target="_blank" class="btn btn-secondary btn-sm">Download</a></td></tr>
+      <td><a href="{% url 'hr:policy_download' policy.pk %}" target="_blank" class="btn btn-secondary btn-sm">Download</a></td></tr>
       {% empty %}<tr><td colspan="3">No policy documents uploaded yet.</td></tr>{% endfor %}
     </tbody>
   </table>

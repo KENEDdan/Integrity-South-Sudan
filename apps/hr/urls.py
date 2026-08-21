@@ -20,14 +20,17 @@ urlpatterns = [
     path("jobs/<int:pk>/", views.job_detail, name="job_detail"),
     path("jobs/<int:pk>/applicants/add/", views.applicant_add, name="applicant_add"),
     path("jobs/<int:pk>/applicants/<int:applicant_pk>/stage/", views.applicant_stage_update, name="applicant_stage_update"),
+    path("applicants/<int:pk>/resume/", views.resume_download, name="resume_download"),
 
     path("compliance/", views.compliance_dashboard, name="compliance_dashboard"),
     path("staff/<int:pk>/training/add/", views.training_add, name="training_add"),
     path("staff/<int:pk>/documents/add/", views.document_add, name="document_add"),
+    path("documents/<int:pk>/download/", views.document_download, name="document_download"),
 
     path("payroll/", views.payroll_list, name="payroll_list"),
     path("payroll/add/", views.payroll_add, name="payroll_add"),
 
     path("policies/", views.policy_list, name="policy_list"),
     path("policies/add/", views.policy_add, name="policy_add"),
+    path("policies/<int:pk>/download/", views.policy_download, name="policy_download"),
 ]

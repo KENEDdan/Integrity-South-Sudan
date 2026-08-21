@@ -5,10 +5,20 @@
 <div class="card" style="margin-bottom:1.5rem;">
   <p><strong>Donor:</strong> {{ donation.donor_name }} ({{ donation.donor_email }})</p>
   <p><strong>Amount:</strong> {{ donation.currency }} {{ donation.amount }}</p>
-  <p>Confirming will record this as Income in the Finance ledger (In Bank).</p>
+  <p>
+    <strong>Proof of Payment:</strong>
+    {% if donation.proof_of_payment %}
+      <a href="{% url 'donations:donation_proof_download' donation.pk %}" target="_blank">View submitted proof</a>
+      <small style="opacity:0.7;">(uploaded {{ donation.proof_uploaded_at|date:"d M Y, H:i" }})</small>
+    {% else %}
+      <span style="opacity:0.7;">Not submitted yet</span>
+    {% endif %}
+  </p>
+  <p>Confirming will record this as Income in the Finance ledger (In Bank). Rejecting lets the donor resubmit proof.</p>
 </div>
 <form method="post" class="card">
   {% csrf_token %}
-  <button type="submit" class="btn btn-primary">Confirm Receipt</button>
+  <button type="submit" name="confirm" class="btn btn-primary">Confirm Receipt</button>
+  <button type="submit" name="reject" class="btn btn-danger">Reject</button>
 </form>
 {% endblock %}

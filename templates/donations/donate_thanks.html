@@ -20,4 +20,33 @@
 
   <p style="margin-top:1rem;">{{ settings.instructions }}</p>
 </div>
+
+{% if donation.status == "confirmed" %}
+<div class="card" style="margin-top:1.5rem;">
+  <p class="status-pill status-active">Confirmed</p>
+  <p>We've confirmed receipt of your donation. Thank you for your support!</p>
+</div>
+{% else %}
+<div class="card" style="margin-top:1.5rem; max-width:520px;">
+  {% if donation.status == "rejected" %}
+    <p class="status-pill status-on_leave">Proof Not Accepted</p>
+    <p>The proof of payment you submitted couldn't be verified. Please upload it again below.</p>
+  {% else %}
+    <h3 class="form-section-title">Upload Proof of Payment</h3>
+    <p style="font-size:0.9rem; opacity:0.85;">Once you've made the transfer, upload a screenshot or receipt so our finance team can confirm it.</p>
+  {% endif %}
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+      {{ proof_form.proof_of_payment.label_tag }}
+      {{ proof_form.proof_of_payment }}
+      {{ proof_form.proof_of_payment.errors }}
+    </div>
+    <button type="submit" class="btn btn-primary">Submit Proof of Payment</button>
+  </form>
+  {% if donation.proof_of_payment and donation.status == "pending" %}
+  <p style="font-size:0.85rem; opacity:0.8; margin-top:0.75rem;">Proof submitted on {{ donation.proof_uploaded_at|date:"d M Y, H:i" }} — awaiting review.</p>
+  {% endif %}
+</div>
+{% endif %}
 {% endblock %}

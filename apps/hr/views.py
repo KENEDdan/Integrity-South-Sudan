@@ -2,12 +2,13 @@ from datetime import timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db.models import Sum
+from django.http import FileResponse, Http404
 from django.utils import timezone
 from apps.accounts.decorators import role_required
 from apps.audit.utils import log_action
 from .models import (
     Staff, StaffStatus, LeaveRequest, LeaveStatus, TimesheetRecord,
-    JobOpening, TrainingRecord, PayrollRun, PolicyDocument,
+    JobOpening, TrainingRecord, PayrollRun, PolicyDocument, StaffDocument, Applicant,
 )
 from .forms import (
     StaffForm, LeaveRequestForm, LeaveDecisionForm, JobOpeningForm, ApplicantForm,
@@ -185,6 +186,14 @@ def applicant_stage_update(request, pk, applicant_pk):
 
 
 @role_required("hr")
+def resume_download(request, pk):
+    applicant = get_object_or_404(Applicant, pk=pk)
+    if not applicant.resume:
+        raise Http404
+    return FileResponse(applicant.resume.open("rb"), filename=applicant.resume.name.rsplit("/", 1)[-1])
+
+
+@role_required("hr")
 def compliance_dashboard(request):
     today = timezone.now().date()
     soon_60 = today + timedelta(days=60)
@@ -256,6 +265,12 @@ def document_add(request, pk):
 
 
 @role_required("hr")
+def document_download(request, pk):
+    document = get_object_or_404(StaffDocument, pk=pk)
+    return FileResponse(document.file.open("rb"), filename=document.file.name.rsplit("/", 1)[-1])
+
+
+@role_required("hr")
 def payroll_list(request):
     runs = PayrollRun.objects.all()
     totals = {}
@@ -303,3 +318,9 @@ def policy_add(request):
     return render(request, "hr/simple_form.html", {
         "form": form, "title": "Upload Policy Document", "enctype": True,
     })
+
+
+@role_required("hr")
+def policy_download(request, pk):
+    policy = get_object_or_404(PolicyDocument, pk=pk)
+    return FileResponse(policy.file.open("rb"), filename=policy.file.name.rsplit("/", 1)[-1])
