@@ -16,6 +16,7 @@ COPY . .
 RUN chmod +x docker-entrypoint.sh
 
 RUN addgroup --system app && adduser --system --group app \
+    && mkdir -p /app/staticfiles /app/media \
     && chown -R app:app /app
 USER app
 
