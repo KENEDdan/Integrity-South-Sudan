@@ -7,3 +7,4 @@ staticfiles/
 .vscode/
 *.log
 venv/
+.venv/

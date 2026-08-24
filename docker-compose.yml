@@ -11,11 +11,25 @@ services:
     volumes:
       - media_data:/app/media
       - staticfiles_data:/app/staticfiles
-    ports:
-      - "8004:8000"
+    expose:
+      - "8000"
     depends_on:
       - db
       - redis
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
 
   db:
     image: postgres:16-alpine
@@ -40,3 +54,5 @@ volumes:
   postgres_data:
   media_data:
   staticfiles_data:
+  caddy_data:
+  caddy_config:
