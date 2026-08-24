@@ -190,12 +190,17 @@
     // Compact language toggle — drives Google Translate via its cookie, no visible Google UI
     function setSiteLanguage(lang) {
       const hostname = window.location.hostname;
-      if (lang === 'en') {
-        document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + hostname;
-      } else {
-        document.cookie = 'googtrans=/en/' + lang + '; path=/;';
-      }
+      const bareDomain = hostname.replace(/^www\./, '');
+      // Clearing the cookie isn't enough for English: with no cookie present,
+      // the widget falls back to auto-detecting the visitor's browser
+      // language and can re-translate on its own. Force /en/en explicitly.
+      // Clear every domain scoping variant the widget might have used, since
+      // a mismatched Domain attribute silently no-ops the deletion.
+      [hostname, '.' + hostname, bareDomain, '.' + bareDomain].forEach((domain) => {
+        document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + domain;
+      });
+      document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      document.cookie = 'googtrans=/en/' + lang + '; path=/;';
       window.location.reload();
     }
     (function () {
