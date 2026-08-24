@@ -5,6 +5,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Integrity South Sudan{% endblock %}</title>
+  <script>
+    // Applied before first paint so pages never flash the wrong theme.
+    (function () {
+      var saved = localStorage.getItem('theme');
+      if (saved === 'dark' || saved === 'light') {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    })();
+  </script>
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
   {% block extra_head %}{% endblock %}
 </head>
@@ -130,16 +139,26 @@
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
   <script>
-    // Theme toggle
+    // Theme toggle — persisted in localStorage so the choice sticks across
+    // every page until the user picks the other mode again.
     const themeToggle = document.getElementById('themeToggle');
     const themeIcon = themeToggle.querySelector('.theme-icon');
     const themeLabel = themeToggle.querySelector('.btn-label');
     const htmlEl = document.documentElement;
+
+    function syncThemeButton() {
+      const isDark = htmlEl.getAttribute('data-theme') === 'dark';
+      themeIcon.textContent = isDark ? '☀️' : '🌙';
+      themeLabel.textContent = isDark ? 'Light mode' : 'Dark mode';
+    }
+    syncThemeButton();
+
     themeToggle.addEventListener('click', () => {
       const isDark = htmlEl.getAttribute('data-theme') === 'dark';
-      htmlEl.setAttribute('data-theme', isDark ? 'light' : 'dark');
-      themeIcon.textContent = isDark ? '🌙' : '☀️';
-      themeLabel.textContent = isDark ? 'Dark mode' : 'Light mode';
+      const next = isDark ? 'light' : 'dark';
+      htmlEl.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      syncThemeButton();
     });
 
     // Notification bell dropdown
