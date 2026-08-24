@@ -1,9 +1,32 @@
 from django.contrib import admin
+from django.http import HttpResponse
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+# Internal/staff-only apps that should never show up in search results.
+_DISALLOWED_PATHS = [
+    "admin",
+    "accounts",
+    "hr",
+    "finance",
+    "notifications",
+    "audit",
+    "reports",
+    "procurement",
+    "assets",
+    "field-data",
+]
+
+
+def robots_txt(request):
+    lines = ["User-agent: *"]
+    lines += [f"Disallow: /{path}/" for path in _DISALLOWED_PATHS]
+    return HttpResponse("\n".join(lines) + "\n", content_type="text/plain")
+
+
 urlpatterns = [
+    path("robots.txt", robots_txt),
     path("admin/", admin.site.urls),
     path("", include("apps.newsfeed.urls", namespace="newsfeed")),
     path("accounts/", include("apps.accounts.urls", namespace="accounts")),
