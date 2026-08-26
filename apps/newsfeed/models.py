@@ -3,7 +3,9 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
-from apps.core.validators import validate_image_extension, validate_image_size
+from apps.core.validators import (
+    validate_document_size, validate_image_extension, validate_image_size, validate_pdf_extension,
+)
 
 
 class NewsCategory(models.TextChoices):
@@ -14,6 +16,16 @@ class NewsCategory(models.TextChoices):
     RECENTLY_CONCLUDED_EVENT = "recently_concluded_event", "Recently Concluded Event"
     UPCOMING_EVENT = "upcoming_event", "Upcoming Event"
     INTERNATIONAL_UPDATE = "international_update", "International Update"
+    POLICY_BRIEF = "policy_brief", "Policy Brief/Paper"
+    PRESS_STATEMENT = "press_statement", "Press Statement"
+    ARTICLE = "article", "Article"
+
+
+# Categories that are PDF publications rather than ordinary posts — these
+# require a downloadable document to be attached.
+DOCUMENT_REQUIRED_CATEGORIES = {
+    NewsCategory.POLICY_BRIEF, NewsCategory.PRESS_STATEMENT, NewsCategory.ARTICLE,
+}
 
 
 def youtube_id_from_url(url):
@@ -34,6 +46,11 @@ class NewsPost(models.Model):
         validators=[validate_image_extension, validate_image_size],
     )
     youtube_url = models.URLField(blank=True, help_text="YouTube link, used as the feed card preview if no thumbnail.")
+    document = models.FileField(
+        upload_to="newsfeed/documents/", blank=True, null=True,
+        validators=[validate_pdf_extension, validate_document_size],
+        help_text="Required PDF for Policy Brief/Paper, Press Statement, and Article posts. Shown as a download.",
+    )
 
     is_published = models.BooleanField(default=True)
     scheduled_for = models.DateTimeField(
@@ -66,6 +83,10 @@ class NewsPost(models.Model):
     @property
     def youtube_thumbnail_url(self):
         return f"https://img.youtube.com/vi/{self.youtube_id}/hqdefault.jpg" if self.youtube_id else ""
+
+    @property
+    def requires_document(self):
+        return self.category in DOCUMENT_REQUIRED_CATEGORIES
 
     @property
     def is_scheduled(self):

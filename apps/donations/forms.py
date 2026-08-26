@@ -1,4 +1,5 @@
 from django import forms
+from apps.core.forms import set_file_accept_attrs
 from .models import Donation, DonationSettings
 
 
@@ -31,6 +32,7 @@ class DonationProofForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["proof_of_payment"].required = True
         self.fields["proof_of_payment"].widget.attrs["class"] = "form-input"
+        set_file_accept_attrs(self)
 
 
 class DonationSettingsForm(forms.ModelForm):

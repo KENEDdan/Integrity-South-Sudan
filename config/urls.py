@@ -1,8 +1,11 @@
+import re
+
 from django.contrib import admin
 from django.http import HttpResponse
-from django.urls import path, include
+from django.urls import path, re_path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.static import serve as serve_static
 
 # Internal/staff-only apps that should never show up in search results.
 _DISALLOWED_PATHS = [
@@ -53,3 +56,22 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+else:
+    # MEDIA_URL is otherwise never served outside DEBUG. Only expose the
+    # subpaths that are genuinely public content — everything else (resumes,
+    # donation proofs, partner/project documents, the internal media
+    # library, ...) stays reachable only through its auth-gated FileResponse
+    # view, same as before.
+    _PUBLIC_MEDIA_PREFIXES = [
+        "newsfeed/thumbnails", "newsfeed/gallery", "newsfeed/documents",
+        "achievements/thumbnails", "achievements/gallery",
+        "activities/thumbnails", "activities/gallery",
+        "partners/logos", "leadership", "podcasts/thumbnails",
+    ]
+    urlpatterns += [
+        re_path(
+            r"^media/(?P<path>(?:%s)/.*)$" % "|".join(re.escape(p) for p in _PUBLIC_MEDIA_PREFIXES),
+            serve_static,
+            {"document_root": settings.MEDIA_ROOT},
+        ),
+    ]

@@ -1,5 +1,6 @@
 from django import forms
 from django.forms import inlineformset_factory
+from apps.core.forms import set_file_accept_attrs
 from .models import Activity, ActivityMedia
 
 
@@ -22,10 +23,12 @@ class ActivityForm(forms.ModelForm):
                 continue
             existing = field.widget.attrs.get("class", "")
             field.widget.attrs["class"] = f"{existing} form-input".strip()
+        set_file_accept_attrs(self)
 
 
 ActivityMediaFormSet = inlineformset_factory(
     Activity, ActivityMedia,
     fields=["image", "youtube_url", "caption"],
     extra=3, can_delete=True,
+    widgets={"image": forms.ClearableFileInput(attrs={"accept": ".jpg,.jpeg,.png,.webp,.gif"})},
 )

@@ -60,6 +60,8 @@ def post_create(request):
             log_action(request.user, "Published news post", post.title)
             messages.success(request, f'"{post.title}" was published.')
             return redirect("newsfeed:manage_list")
+        else:
+            formset = NewsMediaFormSet(request.POST, request.FILES)
     else:
         form = NewsPostForm()
         formset = NewsMediaFormSet()

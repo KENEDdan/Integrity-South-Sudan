@@ -1,4 +1,5 @@
 from django import forms
+from apps.core.forms import set_file_accept_attrs
 from .models import (
     Staff, LeaveRequest, JobOpening, Applicant, TrainingRecord,
     StaffDocument, PayrollRun, PolicyDocument,
@@ -9,6 +10,7 @@ def _styled(form):
     for field in form.fields.values():
         existing = field.widget.attrs.get("class", "")
         field.widget.attrs["class"] = f"{existing} form-input".strip()
+    set_file_accept_attrs(form)
 
 
 class StaffForm(forms.ModelForm):

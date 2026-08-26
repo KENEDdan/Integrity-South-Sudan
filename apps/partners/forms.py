@@ -1,4 +1,5 @@
 from django import forms
+from apps.core.forms import set_file_accept_attrs
 from .models import Partner, PartnerRequest
 
 
@@ -13,6 +14,7 @@ class PartnerForm(forms.ModelForm):
             if name == "is_active":
                 continue
             field.widget.attrs["class"] = "form-input"
+        set_file_accept_attrs(self)
 
 
 class PartnerRequestForm(forms.ModelForm):
@@ -36,6 +38,7 @@ class PartnerRequestForm(forms.ModelForm):
         for name, field in self.fields.items():
             if name != "website":
                 field.widget.attrs["class"] = "form-input"
+        set_file_accept_attrs(self)
 
 
 class PartnerRequestDecisionForm(forms.Form):

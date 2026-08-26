@@ -16,6 +16,10 @@
 
   <div class="post-body">{{ post.body|linebreaks }}</div>
 
+  {% if post.document %}
+    <p><a href="{{ post.document.url }}" class="btn btn-primary" download>Download PDF</a></p>
+  {% endif %}
+
   {% if post.gallery.all %}
     <h3 class="form-section-title">Gallery</h3>
     <div class="gallery-grid">

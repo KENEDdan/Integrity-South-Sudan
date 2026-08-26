@@ -1,4 +1,5 @@
 from django import forms
+from apps.core.forms import set_file_accept_attrs
 from .models import Podcast
 
 
@@ -14,3 +15,4 @@ class PodcastForm(forms.ModelForm):
             if name == "is_published":
                 continue
             field.widget.attrs["class"] = "form-input"
+        set_file_accept_attrs(self)

@@ -5,10 +5,12 @@ from django.template.defaultfilters import filesizeformat
 IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "gif"]
 DOCUMENT_EXTENSIONS = ["pdf", "doc", "docx", "xls", "xlsx", "jpg", "jpeg", "png"]
 MEDIA_ASSET_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "gif", "pdf", "doc", "docx", "ppt", "pptx", "zip"]
+PDF_EXTENSIONS = ["pdf"]
 
 validate_image_extension = FileExtensionValidator(allowed_extensions=IMAGE_EXTENSIONS)
 validate_document_extension = FileExtensionValidator(allowed_extensions=DOCUMENT_EXTENSIONS)
 validate_media_asset_extension = FileExtensionValidator(allowed_extensions=MEDIA_ASSET_EXTENSIONS)
+validate_pdf_extension = FileExtensionValidator(allowed_extensions=PDF_EXTENSIONS)
 
 
 def _validate_max_size(uploaded_file, max_mb):
