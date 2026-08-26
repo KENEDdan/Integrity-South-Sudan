@@ -114,9 +114,10 @@ def field_report_add(request, pk):
 def field_report_mark_reviewed(request, pk, report_pk):
     project = get_object_or_404(Project, pk=pk)
     report = get_object_or_404(project.field_reports, pk=report_pk)
-    report.status = "reviewed"
-    report.save(update_fields=["status"])
-    messages.success(request, "Field report marked as reviewed.")
+    if request.method == "POST":
+        report.status = "reviewed"
+        report.save(update_fields=["status"])
+        messages.success(request, "Field report marked as reviewed.")
     return redirect("projects:project_detail", pk=project.pk)
 
 
@@ -177,9 +178,10 @@ def task_add(request, pk):
 def task_complete(request, pk, task_pk):
     project = get_object_or_404(Project, pk=pk)
     task = get_object_or_404(project.tasks, pk=task_pk)
-    task.status = "completed"
-    task.save(update_fields=["status"])
-    messages.success(request, "Task marked complete.")
+    if request.method == "POST":
+        task.status = "completed"
+        task.save(update_fields=["status"])
+        messages.success(request, "Task marked complete.")
     return redirect("projects:project_detail", pk=project.pk)
 
 

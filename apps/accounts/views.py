@@ -126,16 +126,17 @@ def admin_account_create(request):
 @role_required("super_admin")
 def admin_account_toggle_active(request, pk):
     account = get_object_or_404(User, pk=pk)
-    if account == request.user:
-        messages.error(request, "You can't deactivate your own account.")
-        return redirect("accounts:admin_account_list")
-    account.is_active = not account.is_active
-    account.save(update_fields=["is_active"])
-    log_action(
-        request.user, "Toggled account active status",
-        f"{account.username}: now {'active' if account.is_active else 'inactive'}",
-    )
-    messages.success(request, f"{account.username} is now {'active' if account.is_active else 'inactive'}.")
+    if request.method == "POST":
+        if account == request.user:
+            messages.error(request, "You can't deactivate your own account.")
+            return redirect("accounts:admin_account_list")
+        account.is_active = not account.is_active
+        account.save(update_fields=["is_active"])
+        log_action(
+            request.user, "Toggled account active status",
+            f"{account.username}: now {'active' if account.is_active else 'inactive'}",
+        )
+        messages.success(request, f"{account.username} is now {'active' if account.is_active else 'inactive'}.")
     return redirect("accounts:admin_account_list")
 
 

@@ -118,9 +118,10 @@ def timesheets(request):
 @role_required("hr")
 def timesheet_toggle(request, record_pk):
     record = get_object_or_404(TimesheetRecord, pk=record_pk)
-    record.submitted = not record.submitted
-    record.submitted_on = timezone.now().date() if record.submitted else None
-    record.save()
+    if request.method == "POST":
+        record.submitted = not record.submitted
+        record.submitted_on = timezone.now().date() if record.submitted else None
+        record.save()
     return redirect("hr:timesheets")
 
 
