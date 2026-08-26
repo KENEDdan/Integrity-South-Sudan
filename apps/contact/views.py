@@ -2,8 +2,10 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
+from django_ratelimit.decorators import ratelimit
 from apps.accounts.decorators import role_required
 from apps.audit.utils import log_action
+from apps.core.captcha import verify_turnstile
 from .models import ContactInfo, NewsletterSubscriber
 from .forms import ContactInfoForm, NewsletterSubscriberForm
 
@@ -22,12 +24,20 @@ def _safe_next(request, fallback):
     return fallback
 
 
+@ratelimit(key="ip", rate="10/h", method="POST")
 def newsletter_signup(request):
     fallback = reverse("newsfeed:landing")
     if request.method != "POST":
         return redirect(fallback)
 
     next_url = _safe_next(request, fallback)
+    if getattr(request, "limited", False):
+        messages.error(request, "Too many submissions from this connection — please try again later.")
+        return redirect(next_url)
+    if not verify_turnstile(request):
+        messages.error(request, "Verification failed — please try again.")
+        return redirect(next_url)
+
     form = NewsletterSubscriberForm(request.POST)
     if form.is_valid():
         if form.cleaned_data.get("website"):

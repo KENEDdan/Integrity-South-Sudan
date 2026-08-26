@@ -1,8 +1,10 @@
 from django.http import FileResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django_ratelimit.decorators import ratelimit
 from apps.accounts.decorators import role_required
 from apps.audit.utils import log_action
+from apps.core.captcha import verify_turnstile
 from apps.notifications.utils import notify_role
 from .models import Partner, PartnerRequest, PartnerRequestStatus
 from .forms import PartnerForm, PartnerRequestForm, PartnerRequestDecisionForm
@@ -13,10 +15,15 @@ def public_list(request):
     return render(request, "partners/public_list.html", {"partners": partners})
 
 
+@ratelimit(key="ip", rate="5/h", method="POST")
 def partner_request_create(request):
     if request.method == "POST":
         form = PartnerRequestForm(request.POST, request.FILES)
-        if form.is_valid():
+        if getattr(request, "limited", False):
+            messages.error(request, "Too many submissions from this connection — please try again later.")
+        elif not verify_turnstile(request):
+            messages.error(request, "Verification failed — please try again.")
+        elif form.is_valid():
             if form.cleaned_data.get("website"):
                 return redirect("partners:public_list")  # honeypot tripped — drop it silently
             partner_request = form.save()

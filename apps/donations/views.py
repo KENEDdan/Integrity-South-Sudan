@@ -3,16 +3,23 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db import transaction
 from django.utils import timezone
+from django_ratelimit.decorators import ratelimit
 from apps.accounts.decorators import role_required
 from apps.audit.utils import log_action
+from apps.core.captcha import verify_turnstile
 from .models import Donation, DonationSettings, DonationStatus
 from .forms import DonationForm, DonationProofForm, DonationSettingsForm
 
 
+@ratelimit(key="ip", rate="5/h", method="POST")
 def donate(request):
     if request.method == "POST":
         form = DonationForm(request.POST)
-        if form.is_valid():
+        if getattr(request, "limited", False):
+            messages.error(request, "Too many submissions from this connection — please try again later.")
+        elif not verify_turnstile(request):
+            messages.error(request, "Verification failed — please try again.")
+        elif form.is_valid():
             if form.cleaned_data.get("website"):
                 return redirect("donations:donate")  # honeypot tripped — drop it silently
             donation = form.save()
@@ -22,20 +29,25 @@ def donate(request):
     return render(request, "donations/donate.html", {"form": form})
 
 
+@ratelimit(key="ip", rate="10/h", method="POST")
 def donate_thanks(request, reference_code):
     donation = get_object_or_404(Donation, reference_code=reference_code)
     settings_obj = DonationSettings.get_solo()
     proof_form = None
     if donation.status in (DonationStatus.PENDING, DonationStatus.REJECTED):
         if request.method == "POST":
-            proof_form = DonationProofForm(request.POST, request.FILES, instance=donation)
-            if proof_form.is_valid():
-                proof = proof_form.save(commit=False)
-                proof.proof_uploaded_at = timezone.now()
-                proof.status = DonationStatus.PENDING
-                proof.save()
-                messages.success(request, "Proof of payment uploaded — our finance team will review it shortly.")
-                return redirect("donations:donate_thanks", reference_code=reference_code)
+            if getattr(request, "limited", False):
+                messages.error(request, "Too many attempts from this connection — please try again later.")
+                proof_form = DonationProofForm(instance=donation)
+            else:
+                proof_form = DonationProofForm(request.POST, request.FILES, instance=donation)
+                if proof_form.is_valid():
+                    proof = proof_form.save(commit=False)
+                    proof.proof_uploaded_at = timezone.now()
+                    proof.status = DonationStatus.PENDING
+                    proof.save()
+                    messages.success(request, "Proof of payment uploaded — our finance team will review it shortly.")
+                    return redirect("donations:donate_thanks", reference_code=reference_code)
         else:
             proof_form = DonationProofForm(instance=donation)
     return render(request, "donations/donate_thanks.html", {

@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 from decouple import config
 
@@ -97,6 +98,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "apps.notifications.context_processors.notifications_processor",
                 "apps.contact.context_processors.contact_info_processor",
+                "apps.core.context_processors.turnstile_processor",
             ],
         },
     },
@@ -115,6 +117,30 @@ DATABASES = {
         "PORT": config("POSTGRES_PORT"),
     }
 }
+
+REDIS_HOST = config("REDIS_HOST", default="localhost")
+REDIS_PORT = config("REDIS_PORT", default=6379, cast=int)
+
+# Shared across all gunicorn workers — required for rate-limiting (django-ratelimit)
+# to actually work, since an in-process cache wouldn't see requests handled by
+# other workers.
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": f"redis://{REDIS_HOST}:{REDIS_PORT}/1",
+    }
+}
+
+# Cloudflare Turnstile — protects the public donation, partner-request, and
+# newsletter forms from bot submissions. Verification is skipped (forms work
+# normally, just unprotected) until both keys are set.
+TURNSTILE_SITE_KEY = config("TURNSTILE_SITE_KEY", default="")
+TURNSTILE_SECRET_KEY = config("TURNSTILE_SECRET_KEY", default="")
+
+# django-ratelimit's own documented pattern for test suites: real rate limits
+# would otherwise accumulate in the shared Redis cache across test runs and
+# make tests that legitimately POST to the same endpoint several times fail.
+RATELIMIT_ENABLE = "test" not in sys.argv
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},

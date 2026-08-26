@@ -15,6 +15,9 @@
     })();
   </script>
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  {% if TURNSTILE_SITE_KEY %}
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  {% endif %}
   {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -121,6 +124,7 @@
           <input type="hidden" name="next" value="{{ request.path }}">
           <input type="text" name="website" autocomplete="off" tabindex="-1" class="hp-field" aria-hidden="true">
           <input type="email" name="email" placeholder="Your email address" class="form-input" required>
+          {% if TURNSTILE_SITE_KEY %}<div class="cf-turnstile" data-sitekey="{{ TURNSTILE_SITE_KEY }}"></div>{% endif %}
           <button type="submit" class="btn btn-primary">Subscribe</button>
         </form>
         <div style="margin-top:1rem;">
