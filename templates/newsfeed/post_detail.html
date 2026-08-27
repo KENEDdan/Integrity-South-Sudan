@@ -17,7 +17,10 @@
   <div class="post-body">{{ post.body|linebreaks }}</div>
 
   {% if post.document %}
-    <p><a href="{{ post.document.url }}" class="btn btn-primary" download>Download PDF</a></p>
+    <p class="pdf-actions">
+      <a href="{{ post.document.url }}" class="btn btn-primary" target="_blank" rel="noopener">Read PDF</a>
+      <a href="{{ post.document.url }}" class="btn btn-secondary" download>Download PDF</a>
+    </p>
   {% endif %}
 
   {% if post.gallery.all %}
